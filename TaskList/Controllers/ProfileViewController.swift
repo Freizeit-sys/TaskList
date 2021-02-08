@@ -8,6 +8,9 @@
 import UIKit
 
 class ProfileViewController: UIViewController, ProfileViewDelegate, ProfileHeaderViewDelegate {
+    
+    private let imageNames = ["settings", "about"]
+    private let titles = ["Settings", "About"]
 
     private let cellId = "cellId"
     private let headerId = "headerId"
@@ -26,7 +29,7 @@ class ProfileViewController: UIViewController, ProfileViewDelegate, ProfileHeade
     
     private func setupViews() {
         self.v.delegate = self
-        self.v.collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellId)
+        self.v.collectionView.register(ProfileCell.self, forCellWithReuseIdentifier: cellId)
         self.v.collectionView.register(ProfileHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
         self.v.collectionView.delegate = self
         self.v.collectionView.dataSource = self
@@ -52,7 +55,13 @@ extension ProfileViewController: UICollectionViewDelegateFlowLayout, UICollectio
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! ProfileCell
+        
+        let image = UIImage(named: imageNames[indexPath.item])
+        let title = titles[indexPath.item]
+        cell.image = image
+        cell.title = title
+        
         return cell
     }
     
@@ -63,7 +72,7 @@ extension ProfileViewController: UICollectionViewDelegateFlowLayout, UICollectio
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width - 2 * 32, height: self.v.cellHeight)
+        return CGSize(width: view.frame.width - 2 * 40, height: self.v.cellHeight)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {

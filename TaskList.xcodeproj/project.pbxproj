@@ -20,14 +20,14 @@
 		844DCB0E25CE990B00666392 /* CALayer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844DCB0D25CE990B00666392 /* CALayer+Extensions.swift */; };
 		846D2F3325CEF7C800D9C63D /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846D2F3225CEF7C800D9C63D /* CustomTabBar.swift */; };
 		846D2F5725D032FF00D9C63D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846D2F5625D032FF00D9C63D /* SettingsViewController.swift */; };
-		846D2F5C25D033AB00D9C63D /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846D2F5B25D033AB00D9C63D /* ProfileViewController.swift */; };
 		846D2F7625D034C800D9C63D /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846D2F6025D0344300D9C63D /* ProfileView.swift */; };
 		8476207025D09CCF0060EF36 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8476206F25D09CCF0060EF36 /* HeaderView.swift */; };
 		847620C225D0F59E0060EF36 /* TaskListsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847620C125D0F59E0060EF36 /* TaskListsViewController.swift */; };
 		847620CA25D0F6360060EF36 /* TaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847620C925D0F6360060EF36 /* TaskCell.swift */; };
 		847620E125D128770060EF36 /* TaskListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8415416D256466BD00C9D6F3 /* TaskListController.swift */; };
-		847620FD25D139150060EF36 /* ProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847620FC25D139150060EF36 /* ProfileCell.swift */; };
 		8476210A25D139640060EF36 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847620F125D132C90060EF36 /* ProfileHeaderView.swift */; };
+		8476211125D13B3E0060EF36 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846D2F5B25D033AB00D9C63D /* ProfileViewController.swift */; };
+		8476211525D13B430060EF36 /* ProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847620FC25D139150060EF36 /* ProfileCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -176,8 +176,8 @@
 				846D2F6025D0344300D9C63D /* ProfileView.swift */,
 				847620C925D0F6360060EF36 /* TaskCell.swift */,
 				8476206F25D09CCF0060EF36 /* HeaderView.swift */,
-				847620F125D132C90060EF36 /* ProfileHeaderView.swift */,
 				847620FC25D139150060EF36 /* ProfileCell.swift */,
+				847620F125D132C90060EF36 /* ProfileHeaderView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -337,6 +337,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8476211525D13B430060EF36 /* ProfileCell.swift in Sources */,
+				8476211125D13B3E0060EF36 /* ProfileViewController.swift in Sources */,
 				8476210A25D139640060EF36 /* ProfileHeaderView.swift in Sources */,
 				847620E125D128770060EF36 /* TaskListController.swift in Sources */,
 				846D2F7625D034C800D9C63D /* ProfileView.swift in Sources */,
@@ -346,10 +348,8 @@
 				846D2F5725D032FF00D9C63D /* SettingsViewController.swift in Sources */,
 				846D2F3325CEF7C800D9C63D /* CustomTabBar.swift in Sources */,
 				8415412A2564638900C9D6F3 /* AppDelegate.swift in Sources */,
-				846D2F5C25D033AB00D9C63D /* ProfileViewController.swift in Sources */,
 				841541692564650200C9D6F3 /* UIView+Extensions.swift in Sources */,
 				847620CA25D0F6360060EF36 /* TaskCell.swift in Sources */,
-				847620FD25D139150060EF36 /* ProfileCell.swift in Sources */,
 				844DCB0E25CE990B00666392 /* CALayer+Extensions.swift in Sources */,
 				8415412C2564638900C9D6F3 /* SceneDelegate.swift in Sources */,
 				84154164256464F300C9D6F3 /* UIColor+Extensions.swift in Sources */,
