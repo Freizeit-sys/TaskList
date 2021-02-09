@@ -24,7 +24,10 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
         }
     }
     
-    let completeButton: UIButton = {
+    private var isAnimate: Bool = false
+    private var isFeedback: Bool = false
+    
+    lazy var completeButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = .systemGray
         let image = UIImage(named: "uncheck")?.withRenderingMode(.alwaysTemplate)
@@ -71,15 +74,24 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
         return pg
     }()
     
+    private let feedbackGenerator: Any? = {
+        if #available(iOS 10.0, *) {
+            let generator = UIImpactFeedbackGenerator(style: .light)
+            generator.prepare()
+            return generator
+        } else {
+            return nil
+        }
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         self.commonInit()
         
         self.contentView.backgroundColor = .white
-        self.contentView.layer.applyMaterialShadow(elevation: 4)
         self.contentView.layer.cornerRadius = 25
-        self.contentView.alpha = 0.5
+        self.contentView.layer.applyMaterialShadow(elevation: 4)
     }
     
     required init?(coder: NSCoder) {
@@ -93,16 +105,39 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
         let width = self.contentView.frame.width
         let height  = self.contentView.frame.height
         
-        // Move contentView
         if panGesture.state == .changed {
+            // Move contentView
             if -point.x > 0 {
                 self.contentView.frame = CGRect(x: point.x, y: 0, width: width, height: height)
             }
+            
+            // Feedback or animation archive image
+            if -point.x > 60 && !isFeedback {
+                
+                UIView.animate(withDuration: 0.2) {
+                    self.archiveImageShadowView.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+                } completion: { (finished) in
+                    UIView.animate(withDuration: 0.2) {
+                        self.archiveImageShadowView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+                    }
+                }
+                
+                if let generator = feedbackGenerator as? UIImpactFeedbackGenerator {
+                    generator.impactOccurred()
+                    isFeedback = true
+                }
+            }
+            
+            // Reset feedback or animation
+            if -point.x < 60 && isFeedback {
+                isAnimate = false
+                isFeedback = false
+            }
         }
         
-        // Move contentView
         if panGesture.state == .ended {
-            if width - (-point.x) < 60 {
+            // Move contentView
+            if width - (-point.x) < width / 2 {
                 self.contentView.frame = CGRect(x: -(width + 32), y: 0, width: width, height: height)
             }
         }
@@ -133,6 +168,14 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     
     @objc private func handleComplete() {
         self.isCompleted = !self.isCompleted
+        
+        let imageName = self.isCompleted ? "check" : "uncheck"
+        let image = UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate)
+        
+        UIView.transition(with: self.completeButton.imageView!, duration: 0.3, options: .transitionCrossDissolve) {
+            self.completeButton.imageView?.image = image
+        } completion: { (finished) in }
+        
         delegate?.didCheck(complete: self.isCompleted)
     }
     
@@ -147,7 +190,9 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
             let width = self.contentView.frame.width
             let dx = width - (-point.x)
             
-            if dx < 60 {
+            //if dx < 60 {
+            if dx < width / 2 {
+                // Delete cell
                 UIView.animate(withDuration: 0.3) {
                     self.archiveImageShadowView.alpha = 0.0
                     self.setNeedsLayout()
@@ -156,11 +201,14 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
                     self.delegate?.didDeleteCell(self)
                 }
             } else {
+                // Stop deleting cell
                 UIView.animate(withDuration: 0.3) {
                     self.setNeedsLayout()
                     self.layoutIfNeeded()
                 }
             }
+            
+            isFeedback = false
         default:
             ()
         }
