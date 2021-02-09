@@ -52,7 +52,10 @@ class TaskListController: UIViewController {
 extension TaskListController: TaskListViewDelegate {
     
     func didShowMenu() {
-        print("show menu")
+        let taskListsVC = TaskListsViewController()
+        taskListsVC.modalTransitionStyle = .crossDissolve
+        taskListsVC.modalPresentationStyle = .overCurrentContext
+        present(taskListsVC, animated: true, completion: nil)
     }
     
     func didCreateTask() {
@@ -87,7 +90,13 @@ extension TaskListController: UICollectionViewDelegateFlowLayout, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width - 2 * 32, height: 80)
+        let dummyCell = TaskCell(frame: CGRect(x: 0, y: 0, width: view.frame.width - 2 * 32, height: 1000))
+        dummyCell.layoutIfNeeded()
+        
+        let targetSize = CGSize(width: view.frame.width - 2 * 32, height: 1000)
+        let estimatedSize = dummyCell.systemLayoutSizeFitting(targetSize)
+        
+        return CGSize(width: view.frame.width - 2 * 32, height: estimatedSize.height)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {

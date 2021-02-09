@@ -55,7 +55,7 @@ class ProfileView: UIView {
         
         overlayView.fillSuperView()
         
-        collectionView.anchor(top: self.topAnchor, left: self.leftAnchor, bottom: nil, right: self.rightAnchor, paddingTop: 150, paddingLeft: 32, paddingBottom: 0, paddingRight: 32, width: 0, height: cellHeight * 2 + headerHeight)
+        collectionView.anchor(top: self.topAnchor, left: self.leftAnchor, bottom: nil, right: self.rightAnchor, paddingTop: 150, paddingLeft: 32, paddingBottom: 0, paddingRight: 32, width: 0, height: cellHeight * CGFloat(itemNum) + headerHeight)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBack))
         tapGesture.cancelsTouchesInView = false
