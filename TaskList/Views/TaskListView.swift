@@ -28,14 +28,14 @@ class TaskListView: UIView {
     }()
     
     let collectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
+        let layout = CustomCollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 16
-        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 40, right: 16)
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.backgroundColor = .clear
         cv.contentOffset.y = 0.0
-        cv.alwaysBounceVertical = true
+        cv.alwaysBounceVertical = false
         cv.showsVerticalScrollIndicator = true
         return cv
     }()

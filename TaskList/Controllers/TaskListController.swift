@@ -7,7 +7,9 @@
 
 import UIKit
 
-class TaskListController: UIViewController, TaskListViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
+class TaskListController: UIViewController {
+    
+    private var itemNum = 4
 
     private let cellId = "cellId"
     private let headerId = "headerId"
@@ -21,21 +23,8 @@ class TaskListController: UIViewController, TaskListViewDelegate, UICollectionVi
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Fix safe area top
-//        if #available(iOS 11.0, *) {
-//            additionalSafeAreaInsets.top = 60
-//        } else {
-//            let topInset = UIApplication.shared.windows.first?.safeAreaInsets.top ?? 0
-//            navigationController?.navigationBar.setTitleVerticalPositionAdjustment(-topInset, for: .default)
-//            navigationItem.leftBarButtonItem?.setBackgroundVerticalPositionAdjustment(-topInset, for: .default)
-//        }
-        
-        //self.setupNavigationItems()
         self.setupViews()
-        
-        navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationController?.navigationBar.isTranslucent = false
+        self.setupNavigationBar()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -46,41 +35,21 @@ class TaskListController: UIViewController, TaskListViewDelegate, UICollectionVi
     
     private func setupViews() {
         self.v.delegate = self
-        self.v.collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellId)
-        self.v.collectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
+        self.v.collectionView.register(TaskCell.self, forCellWithReuseIdentifier: cellId)
+        self.v.collectionView.register(TaskListHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
         self.v.collectionView.delegate = self
         self.v.collectionView.dataSource = self
     }
     
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+    private func setupNavigationBar() {
+        navigationController?.navigationBar.barTintColor = .rgb(red: 242, green: 246, blue: 254)
+        navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationController?.navigationBar.isTranslucent = false
     }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 20
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
-        cell.backgroundColor = .white
-        cell.layer.applyMaterialShadow(elevation: 4)
-        cell.layer.cornerRadius = 25
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId, for: indexPath) as! HeaderView
-        header.delegate = self
-        return header
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width - 2 * 32, height: 80)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: view.frame.width, height: 100)
-    }
+}
+
+extension TaskListController: TaskListViewDelegate {
     
     func didShowMenu() {
         print("show menu")
@@ -95,13 +64,60 @@ class TaskListController: UIViewController, TaskListViewDelegate, UICollectionVi
     }
 }
 
-extension TaskListController: HeaderViewDelegate {
+extension TaskListController: UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return itemNum
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! TaskCell
+        cell.delegate = self
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId, for: indexPath) as! TaskListHeaderView
+        header.delegate = self
+        return header
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: view.frame.width - 2 * 32, height: 80)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        return CGSize(width: view.frame.width, height: 100)
+    }
+}
+
+extension TaskListController: TaskListHeaderViewDelegate {
     
     func didShowProfile() {
         let profileVC = ProfileViewController()
         profileVC.modalTransitionStyle = .crossDissolve
         profileVC.modalPresentationStyle = .overCurrentContext
         present(profileVC, animated: true, completion: nil)
+    }
+}
+
+extension TaskListController: TaskCellDelegate {
+    
+    func didCheck(complete: Bool) {
+        
+    }
+    
+    func didDeleteCell(_ cell: TaskCell) {
+        if let indexPath: IndexPath = self.v.collectionView.indexPath(for: cell) {
+            self.v.collectionView.performBatchUpdates({
+                self.itemNum -= 1
+                self.v.collectionView.deleteItems(at: [indexPath])
+            }, completion: nil)
+        }
     }
 }
 

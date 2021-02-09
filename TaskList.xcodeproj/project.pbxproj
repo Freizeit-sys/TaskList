@@ -21,13 +21,14 @@
 		846D2F3325CEF7C800D9C63D /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846D2F3225CEF7C800D9C63D /* CustomTabBar.swift */; };
 		846D2F5725D032FF00D9C63D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846D2F5625D032FF00D9C63D /* SettingsViewController.swift */; };
 		846D2F7625D034C800D9C63D /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846D2F6025D0344300D9C63D /* ProfileView.swift */; };
-		8476207025D09CCF0060EF36 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8476206F25D09CCF0060EF36 /* HeaderView.swift */; };
+		8476207025D09CCF0060EF36 /* TaskListHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8476206F25D09CCF0060EF36 /* TaskListHeaderView.swift */; };
 		847620C225D0F59E0060EF36 /* TaskListsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847620C125D0F59E0060EF36 /* TaskListsViewController.swift */; };
 		847620CA25D0F6360060EF36 /* TaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847620C925D0F6360060EF36 /* TaskCell.swift */; };
 		847620E125D128770060EF36 /* TaskListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8415416D256466BD00C9D6F3 /* TaskListController.swift */; };
 		8476210A25D139640060EF36 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847620F125D132C90060EF36 /* ProfileHeaderView.swift */; };
 		8476211125D13B3E0060EF36 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846D2F5B25D033AB00D9C63D /* ProfileViewController.swift */; };
 		8476211525D13B430060EF36 /* ProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847620FC25D139150060EF36 /* ProfileCell.swift */; };
+		8476212625D21A770060EF36 /* CustomCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8476212525D21A770060EF36 /* CustomCollectionViewFlowLayout.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,11 +71,12 @@
 		846D2F5625D032FF00D9C63D /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		846D2F5B25D033AB00D9C63D /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		846D2F6025D0344300D9C63D /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
-		8476206F25D09CCF0060EF36 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
+		8476206F25D09CCF0060EF36 /* TaskListHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListHeaderView.swift; sourceTree = "<group>"; };
 		847620C125D0F59E0060EF36 /* TaskListsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListsViewController.swift; sourceTree = "<group>"; };
 		847620C925D0F6360060EF36 /* TaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCell.swift; sourceTree = "<group>"; };
 		847620F125D132C90060EF36 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
 		847620FC25D139150060EF36 /* ProfileCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCell.swift; sourceTree = "<group>"; };
+		8476212525D21A770060EF36 /* CustomCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -175,7 +177,7 @@
 				841541752564679800C9D6F3 /* TaskListView.swift */,
 				846D2F6025D0344300D9C63D /* ProfileView.swift */,
 				847620C925D0F6360060EF36 /* TaskCell.swift */,
-				8476206F25D09CCF0060EF36 /* HeaderView.swift */,
+				8476206F25D09CCF0060EF36 /* TaskListHeaderView.swift */,
 				847620FC25D139150060EF36 /* ProfileCell.swift */,
 				847620F125D132C90060EF36 /* ProfileHeaderView.swift */,
 			);
@@ -203,6 +205,7 @@
 			isa = PBXGroup;
 			children = (
 				846D2F3225CEF7C800D9C63D /* CustomTabBar.swift */,
+				8476212525D21A770060EF36 /* CustomCollectionViewFlowLayout.swift */,
 			);
 			path = CustomComponents;
 			sourceTree = "<group>";
@@ -344,8 +347,9 @@
 				846D2F7625D034C800D9C63D /* ProfileView.swift in Sources */,
 				847620C225D0F59E0060EF36 /* TaskListsViewController.swift in Sources */,
 				841541762564679800C9D6F3 /* TaskListView.swift in Sources */,
-				8476207025D09CCF0060EF36 /* HeaderView.swift in Sources */,
+				8476207025D09CCF0060EF36 /* TaskListHeaderView.swift in Sources */,
 				846D2F5725D032FF00D9C63D /* SettingsViewController.swift in Sources */,
+				8476212625D21A770060EF36 /* CustomCollectionViewFlowLayout.swift in Sources */,
 				846D2F3325CEF7C800D9C63D /* CustomTabBar.swift in Sources */,
 				8415412A2564638900C9D6F3 /* AppDelegate.swift in Sources */,
 				841541692564650200C9D6F3 /* UIView+Extensions.swift in Sources */,

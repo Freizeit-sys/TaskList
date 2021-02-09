@@ -1,5 +1,5 @@
 //
-//  TitleView.swift
+//  TaskListHeaderView.swift
 //  TaskList
 //
 //  Created by Admin on 2021/02/08.
@@ -7,13 +7,13 @@
 
 import UIKit
 
-protocol HeaderViewDelegate: class {
+protocol TaskListHeaderViewDelegate: class {
     func didShowProfile()
 }
 
-class HeaderView: UICollectionReusableView {
+class TaskListHeaderView: UICollectionReusableView {
     
-    weak var delegate: HeaderViewDelegate?
+    weak var delegate: TaskListHeaderViewDelegate?
     
     let titleLabel: UILabel = {
         let label = UILabel()
