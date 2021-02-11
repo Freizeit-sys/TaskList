@@ -48,6 +48,12 @@ class TaskListsFooterView: UICollectionReusableView {
         return gesture
     }()
     
+    private let longPressGesture: UILongPressGestureRecognizer = {
+        let gesture = UILongPressGestureRecognizer()
+        gesture.cancelsTouchesInView = false
+        return gesture
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -72,10 +78,36 @@ class TaskListsFooterView: UICollectionReusableView {
         
         tapGesture.addTarget(self, action: #selector(handleCreateNewList))
         self.addGestureRecognizer(tapGesture)
+        
+        longPressGesture.minimumPressDuration = 0.3
+        longPressGesture.addTarget(self, action: #selector(handleLongPress))
+        self.addGestureRecognizer(longPressGesture)
     }
     
     @objc private func handleCreateNewList() {
+        UIView.animate(withDuration: 0.15) {
+            self.backgroundColor = .rgb(red: 229, green: 229, blue: 232)
+        } completion: { (finished) in
+            UIView.animate(withDuration: 0.15) {
+                self.backgroundColor = .clear
+            }
+        }
         delegate?.didCreateNewList()
+    }
+    
+    @objc private func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
+        switch gesture.state {
+        case .began:
+            UIView.animate(withDuration: 0.15) { self.backgroundColor = .rgb(red: 229, green: 229, blue: 232) }
+        case .ended:
+            UIView.animate(withDuration: 0.15) {
+                self.backgroundColor = .clear
+            } completion: { (finished) in
+                self.delegate?.didCreateNewList()
+            }
+        default:
+            ()
+        }
     }
 }
 
@@ -87,12 +119,13 @@ class TaskListsView: UIView {
     
     weak var delegate: TaskListsViewDelegate?
     
+    var collectionViewTopAnchor: NSLayoutConstraint!
     var collectionViewHeightAnchor: NSLayoutConstraint!
     
     let cellHeight: CGFloat = 48
     let footerHeight: CGFloat = 48
     
-    let overlayView: UIView = {
+    private let overlayView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(white: 0.0, alpha: 0.5)
         return view
@@ -106,10 +139,22 @@ class TaskListsView: UIView {
         cv.backgroundColor = .white
         cv.showsVerticalScrollIndicator = false
         cv.isScrollEnabled = false
-        cv.layer.cornerRadius = 15
+        cv.layer.cornerRadius = 10
         cv.layer.applyMaterialShadow(elevation: 4)
         cv.layer.masksToBounds = false
         return cv
+    }()
+    
+    private let tapGesture: UITapGestureRecognizer = {
+        let gesture = UITapGestureRecognizer()
+        gesture.cancelsTouchesInView = false
+        return gesture
+    }()
+    
+    private let panGesture: UIPanGestureRecognizer = {
+        let gesture = UIPanGestureRecognizer()
+        gesture.cancelsTouchesInView = false
+        return gesture
     }()
     
     override init(frame: CGRect) {
@@ -122,6 +167,39 @@ class TaskListsView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func percentage(value: Double, value2: Double) -> Double {
+        return value / value2 * 1.0
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        let pointY: CGFloat = panGesture.translation(in: self).y
+        let minY: CGFloat = collectionView.frame.minY
+        let width: CGFloat = collectionView.frame.width
+        let height: CGFloat = collectionView.frame.height
+        
+        let point: CGPoint = panGesture.location(in: self)
+        let per: CGFloat = CGFloat((percentage(value: Double(point.y), value2: Double(frame.height - height))))
+        
+        //print("y:", point.y, "per:", per, "result:", point.y * per)
+        
+        let r = minY + per
+        
+        // Expand view
+        if panGesture.state == .changed {
+            //collectionView.frame = CGRect(x: 0, y: r, width: width, height: height)
+            collectionView.frame = CGRect(x: 0, y: minY + pointY, width: width, height: height - pointY)
+        }
+        
+        // Dismiss
+        if panGesture.state == .ended {
+            if pointY > 30 {
+                self.delegate?.didBack()
+            }
+        }
+    }
+    
     private func commonInit() {
         self.addSubview(overlayView)
         self.addSubview(collectionView)
@@ -129,23 +207,43 @@ class TaskListsView: UIView {
         overlayView.fillSuperView()
         
         let bottomInset = UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 0
-        collectionView.anchor(top: nil, left: self.leftAnchor, bottom: self.bottomAnchor, right: self.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-        collectionViewHeightAnchor = collectionView.heightAnchor.constraint(equalToConstant: cellHeight + footerHeight + bottomInset)
+        collectionViewTopAnchor = collectionView.topAnchor.constraint(equalTo: self.bottomAnchor)
+        collectionViewHeightAnchor = collectionView.heightAnchor.constraint(equalToConstant: footerHeight + bottomInset)
+        
+        collectionViewTopAnchor.isActive = true
         collectionViewHeightAnchor.isActive = true
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBack))
-        tapGesture.cancelsTouchesInView = false
+        collectionView.anchor(top: nil, left: self.leftAnchor, bottom: self.bottomAnchor, right: self.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        
+        tapGesture.addTarget(self, action: #selector(handleBack))
         overlayView.addGestureRecognizer(tapGesture)
+        
+        panGesture.addTarget(self, action: #selector(handlePanGesture(_:)))
+        collectionView.addGestureRecognizer(panGesture)
     }
     
-    @objc func handleBack() {
+    @objc private func handleBack() {
         delegate?.didBack()
+    }
+    
+    @objc private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
+        switch gesture.state {
+        case .changed:
+            self.setNeedsLayout()
+        case .ended:
+            UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 1.0, options: .curveEaseOut) {
+                self.setNeedsLayout()
+                self.layoutIfNeeded()
+            } completion: { (finished) in }
+        default:
+            ()
+        }
     }
 }
 
 class TaskListsViewController: UIViewController, TaskListsViewDelegate {
     
-    private var itemNum = 1
+    private var itemNum = 2
     
     private let cellId = "cellId"
     private let footerId = "footerId"
@@ -162,6 +260,12 @@ class TaskListsViewController: UIViewController, TaskListsViewDelegate {
         self.setupViews()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.showCollectionView()
+    }
+    
     private func setupViews() {
         self.v.delegate = self
         self.v.collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellId)
@@ -170,12 +274,27 @@ class TaskListsViewController: UIViewController, TaskListsViewDelegate {
         self.v.collectionView.dataSource = self
     }
     
-    private func updateCollectionViewHeight() {
+    private func showCollectionView() {
+        v.collectionViewHeightAnchor.constant += v.cellHeight * CGFloat(itemNum)
+        v.collectionViewTopAnchor.constant -= v.collectionViewHeightAnchor.constant
         
+        UIView.animate(withDuration: 0.3, delay: 0.1, usingSpringWithDamping: 0.8, initialSpringVelocity: 1.0, options: .curveEaseOut) {
+            self.v.layoutIfNeeded()
+        } completion: { (finished) in }
+    }
+    
+    private func hideCollectionView() {
+        v.collectionViewHeightAnchor.constant = 0
+        v.collectionViewTopAnchor.constant = 0
+        
+        UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 1.0, options: .curveLinear) {
+            self.v.layoutIfNeeded()
+        } completion: { (finished) in }
+        self.dismiss(animated: true, completion: nil)
     }
     
     func didBack() {
-        self.dismiss(animated: true, completion: nil)
+        hideCollectionView()
     }
 }
 
