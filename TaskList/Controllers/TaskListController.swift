@@ -9,8 +9,7 @@ import UIKit
 
 class TaskListController: UIViewController {
     
-    private var itemNum = 4
-
+    private var datasource: TaskDataSource!
     private let cellId = "cellId"
     private let headerId = "headerId"
     
@@ -22,6 +21,8 @@ class TaskListController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.datasource = TaskDataSource()
         
         self.setupViews()
         self.setupNavigationBar()
@@ -52,7 +53,7 @@ class TaskListController: UIViewController {
 extension TaskListController: TaskListViewDelegate {
     
     func didShowMenu() {
-        let taskListsVC = TaskListsViewController()
+        let taskListsVC = TaskListsController()
         taskListsVC.modalTransitionStyle = .crossDissolve
         taskListsVC.modalPresentationStyle = .overCurrentContext
         present(taskListsVC, animated: true, completion: nil)
@@ -60,6 +61,10 @@ extension TaskListController: TaskListViewDelegate {
     
     func didCreateTask() {
         print("create task")
+        let createTaskVC = CreateTaskController()
+        createTaskVC.modalTransitionStyle = .crossDissolve
+        createTaskVC.modalPresentationStyle = .overCurrentContext
+        present(createTaskVC, animated: true, completion: nil)
     }
     
     func didShowOptions() {
@@ -74,12 +79,16 @@ extension TaskListController: UICollectionViewDelegateFlowLayout, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return itemNum
+        return self.datasource.count()
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! TaskCell
         cell.delegate = self
+        
+        let task = self.datasource.task(at: indexPath.item)
+        cell.task = task
+        
         return cell
     }
     
@@ -91,6 +100,10 @@ extension TaskListController: UICollectionViewDelegateFlowLayout, UICollectionVi
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let dummyCell = TaskCell(frame: CGRect(x: 0, y: 0, width: view.frame.width - 2 * 32, height: 1000))
+        
+        let task = self.datasource.task(at: indexPath.item)
+        dummyCell.task = task
+        
         dummyCell.layoutIfNeeded()
         
         let targetSize = CGSize(width: view.frame.width - 2 * 32, height: 1000)
@@ -107,7 +120,7 @@ extension TaskListController: UICollectionViewDelegateFlowLayout, UICollectionVi
 extension TaskListController: TaskListHeaderViewDelegate {
     
     func didShowProfile() {
-        let profileVC = ProfileViewController()
+        let profileVC = ProfileController()
         profileVC.modalTransitionStyle = .crossDissolve
         profileVC.modalPresentationStyle = .overCurrentContext
         present(profileVC, animated: true, completion: nil)
@@ -119,13 +132,12 @@ extension TaskListController: TaskCellDelegate {
     func didCheck(complete: Bool) {
         // change datasource
         
-        
     }
     
     func didDeleteCell(_ cell: TaskCell) {
         if let indexPath: IndexPath = self.v.collectionView.indexPath(for: cell) {
             self.v.collectionView.performBatchUpdates({
-                self.itemNum -= 1
+                self.datasource.delete(at: indexPath.item)
                 self.v.collectionView.deleteItems(at: [indexPath])
             }, completion: nil)
         }

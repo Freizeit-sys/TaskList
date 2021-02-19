@@ -1,5 +1,5 @@
 //
-//  TaskListsViewController.swift
+//  TaskListsController.swift
 //  TaskList
 //
 //  Created by Admin on 2021/02/08.
@@ -179,16 +179,10 @@ class TaskListsView: UIView {
         let width: CGFloat = collectionView.frame.width
         let height: CGFloat = collectionView.frame.height
         
-        let point: CGPoint = panGesture.location(in: self)
-        let per: CGFloat = CGFloat((percentage(value: Double(point.y), value2: Double(frame.height - height))))
-        
-        //print("y:", point.y, "per:", per, "result:", point.y * per)
-        
-        let r = minY + per
+        //let point: CGPoint = panGesture.location(in: self)
         
         // Expand view
         if panGesture.state == .changed {
-            //collectionView.frame = CGRect(x: 0, y: r, width: width, height: height)
             collectionView.frame = CGRect(x: 0, y: minY + pointY, width: width, height: height - pointY)
         }
         
@@ -235,13 +229,12 @@ class TaskListsView: UIView {
                 self.setNeedsLayout()
                 self.layoutIfNeeded()
             } completion: { (finished) in }
-        default:
-            ()
+        default: ()
         }
     }
 }
 
-class TaskListsViewController: UIViewController, TaskListsViewDelegate {
+class TaskListsController: UIViewController, TaskListsViewDelegate {
     
     private var itemNum = 2
     
@@ -290,6 +283,7 @@ class TaskListsViewController: UIViewController, TaskListsViewDelegate {
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 1.0, options: .curveLinear) {
             self.v.layoutIfNeeded()
         } completion: { (finished) in }
+        
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -298,7 +292,7 @@ class TaskListsViewController: UIViewController, TaskListsViewDelegate {
     }
 }
 
-extension TaskListsViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
+extension TaskListsController: UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
@@ -328,7 +322,7 @@ extension TaskListsViewController: UICollectionViewDelegateFlowLayout, UICollect
     }
 }
 
-extension TaskListsViewController: TaskListsFooterViewDelegate {
+extension TaskListsController: TaskListsFooterViewDelegate {
     
     func didCreateNewList() {
         print("create new list")

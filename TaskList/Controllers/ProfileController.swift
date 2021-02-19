@@ -1,5 +1,5 @@
 //
-//  ProfileViewController.swift
+//  ProfileController.swift
 //  TaskList
 //
 //  Created by Admin on 2021/02/07.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ProfileViewController: UIViewController, ProfileViewDelegate, ProfileHeaderViewDelegate {
+class ProfileController: UIViewController, ProfileViewDelegate, ProfileHeaderViewDelegate {
     
     private let imageNames = ["settings", "about"]
     private let titles = ["Settings", "About"]
@@ -44,7 +44,7 @@ class ProfileViewController: UIViewController, ProfileViewDelegate, ProfileHeade
     }
 }
 
-extension ProfileViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
+extension ProfileController: UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1

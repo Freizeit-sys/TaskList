@@ -16,16 +16,41 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     
     weak var delegate: TaskCellDelegate?
     
-    var isCompleted: Bool = false {
+    private var isFeedback: Bool = false
+    
+    var task: Task? {
         didSet {
-            let imageName = self.isCompleted ? "check" : "uncheck"
+            guard let _task = task else { return }
+            titleLabel.text = _task.title
+            
+            let title = _task.title
+            let duedate = _task.duedate.string()
+            
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineSpacing = 4.0
+            
+            let attributed1: [NSAttributedString.Key: Any] = [
+                .paragraphStyle: paragraphStyle,
+                .foregroundColor: UIColor.black,
+                .font: UIFont.systemFont(ofSize: 16, weight: .medium)
+            ]
+            
+            let attributed2: [NSAttributedString.Key: Any] = [
+                .foregroundColor: UIColor.systemGray,
+                .font: UIFont.systemFont(ofSize: 12, weight: .regular)
+            ]
+            
+            let attributedText = NSMutableAttributedString(string: title, attributes: attributed1)
+            attributedText.append(NSAttributedString(string: "\n" + duedate, attributes: attributed2))
+            titleLabel.attributedText = attributedText
+            
+            let isCompleted = _task.completed
+            let imageName = isCompleted ? "check" : "uncheck"
             let image = UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate)
             completeButton.setImage(image, for: .normal)
-            completeButton.tintColor = self.isCompleted ? .rgb(red: 46, green: 88, blue: 226) : .systemGray
+            completeButton.tintColor = isCompleted ? .rgb(red: 46, green: 88, blue: 226) : .systemGray
         }
     }
-    
-    private var isFeedback: Bool = false
     
     private let cellContents: UIView = {
         let view = UIView()
@@ -50,7 +75,6 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     
     let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Add More Content on Dribble Profile"
         label.textColor = .black
         label.textAlignment = .left
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -61,23 +85,9 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     
     //let duedate:
     
-    let archiveImageShadowView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        view.layer.applyMaterialShadow(elevation: 2)
-        view.layer.cornerRadius = 44 / 2
-        view.layer.masksToBounds = false
+    let archiveImageView: UIView = {
+        let view = ArchiveImageView()
         return view
-    }()
-    
-    let archiveImageView: UIImageView = {
-        let iv = UIImageView()
-        let image = UIImage(named: "archive")?.withRenderingMode(.alwaysTemplate)
-        iv.image = image
-        iv.tintColor = .rgb(red: 46, green: 88, blue: 226)
-        iv.contentMode = .scaleAspectFill
-        iv.clipsToBounds = true
-        return iv
     }()
     
     let panGesture: UIPanGestureRecognizer = {
@@ -123,10 +133,10 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
             if point.x < -60 && !isFeedback {
 
                 UIView.animate(withDuration: 0.2) {
-                    self.archiveImageShadowView.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+                    self.archiveImageView.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
                 } completion: { (finished) in
                     UIView.animate(withDuration: 0.2) {
-                        self.archiveImageShadowView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+                        self.archiveImageView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
                     }
                 }
 
@@ -153,23 +163,18 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     }
     
     private func commonInit() {
-        self.addSubview(archiveImageShadowView)
-        archiveImageShadowView.addSubview(archiveImageView)
+        addSubview(archiveImageView)
         
-        self.contentView.addSubview(cellContents)
+        contentView.addSubview(cellContents)
         
-        self.cellContents.addSubview(completeButton)
-        self.cellContents.addSubview(titleLabel)
-        self.cellContents.addGestureRecognizer(panGesture)
+        cellContents.addSubview(completeButton)
+        cellContents.addSubview(titleLabel)
+        cellContents.addGestureRecognizer(panGesture)
         
-        //cellContents.frame = contentView.frame
         cellContents.fillSuperView()
         
-        archiveImageShadowView.anchor(top: nil, left: nil, bottom: nil, right: self.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 16, width: 44, height: 44)
-        archiveImageShadowView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-        
-        let insets = UIEdgeInsets(top: 10, left: 10, bottom: -10, right: -10)
-        archiveImageView.fillSuperView(insets)
+        archiveImageView.anchor(top: nil, left: nil, bottom: nil, right: self.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 16, width: 44, height: 44)
+        archiveImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
         
         completeButton.anchor(top: nil, left: self.cellContents.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 16, paddingBottom: 0, paddingRight: 0, width: 44, height: 44)
         completeButton.centerYAnchor.constraint(equalTo: self.cellContents.centerYAnchor).isActive = true
@@ -180,25 +185,35 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
         panGesture.delegate = self
     }
     
-    @objc private func handleComplete() {
-        self.isCompleted = !self.isCompleted
-        
-        let imageName = self.isCompleted ? "check" : "uncheck"
+    private func changeCheckButtonImage(_ isCompleted: Bool, completion: @escaping() -> ()) {
+        let imageName = isCompleted ? "check" : "uncheck"
         let image = UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate)
         
-        UIView.transition(with: self.completeButton.imageView!, duration: 0.3, options: .transitionCrossDissolve) {
-            self.completeButton.imageView?.image = image
+        UIView.transition(with: completeButton.imageView!, duration: 0.4, options: .transitionCrossDissolve) {
+            self.completeButton.setImage(image, for: .normal)
+            self.completeButton.tintColor = isCompleted ? .rgb(red: 46, green: 88, blue: 226) : .systemGray
         } completion: { (finished) in
-            //
-            self.delegate?.didCheck(complete: self.isCompleted)
-            // Delete cell
-            self.archiveImageShadowView.alpha = 0.0
-            UIView.animate(withDuration: 0.3) {
-                self.cellContents.alpha = 0.0
-            } completion: { (finished) in
-                self.delegate?.didDeleteCell(self)
-            }
+            self.delegate?.didCheck(complete: isCompleted)
+            completion()
         }
+    }
+    
+    private func animateDeleteCell() {
+        UIView.animate(withDuration: 0.3) {
+            self.cellContents.alpha = 0.0
+        } completion: { (finished) in
+            self.delegate?.didDeleteCell(self)
+        }
+    }
+    
+    @objc private func handleComplete() {
+        self.task?.completed.toggle()
+        
+        guard let isCompleted = self.task?.completed else { return print("Did not find task.") }
+        self.changeCheckButtonImage(isCompleted, completion: {
+            self.archiveImageView.alpha = 0.0
+            self.animateDeleteCell()
+        })
     }
     
     @objc func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
@@ -214,7 +229,7 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
             if point.x < -65 {
                 // Delete cell
                 UIView.animate(withDuration: 0.3) {
-                    self.archiveImageShadowView.alpha = 0.0
+                    self.archiveImageView.alpha = 0.0
                     self.setNeedsLayout()
                     self.layoutIfNeeded()
                 } completion: { (finished) in
@@ -243,4 +258,3 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
         return abs((panGesture.velocity(in: panGesture.view)).x) > abs((panGesture.velocity(in: panGesture.view)).y)
     }
 }
-
