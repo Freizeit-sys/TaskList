@@ -15,28 +15,32 @@ class TaskListHeaderView: UICollectionReusableView {
     
     weak var delegate: TaskListHeaderViewDelegate?
     
+    var title: String? {
+        didSet {
+            guard let title = self.title else { return }
+            
+            let attributes1: [NSAttributedString.Key: Any] = [
+                .foregroundColor: UIColor.lightGray,
+                .font: UIFont.systemFont(ofSize: 14)
+            ]
+            
+            let attributes2: [NSAttributedString.Key: Any] = [
+                .foregroundColor: UIColor.black,
+                .font: UIFont.systemFont(ofSize: 26, weight: .bold)
+            ]
+            
+            let attributedText = NSMutableAttributedString(string: "14.05.2020 \n", attributes: attributes1)
+            attributedText.append(NSAttributedString(string: title, attributes: attributes2))
+            
+            titleLabel.attributedText = attributedText
+        }
+    }
+    
     let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Today Tasks"
         label.textAlignment = .left
         label.numberOfLines = 2
         label.lineBreakMode = .byWordWrapping
-        
-        let attributes1: [NSAttributedString.Key: Any] = [
-            .foregroundColor: UIColor.lightGray,
-            .font: UIFont.systemFont(ofSize: 14)
-        ]
-        
-        let attributes2: [NSAttributedString.Key: Any] = [
-            .foregroundColor: UIColor.black,
-            .font: UIFont.systemFont(ofSize: 26, weight: .bold)
-        ]
-        
-        let attributedText = NSMutableAttributedString(string: "14.05.2020 \n", attributes: attributes1)
-        attributedText.append(NSAttributedString(string: "Today Tasks", attributes: attributes2))
-        
-        label.attributedText = attributedText
-
         return label
     }()
     

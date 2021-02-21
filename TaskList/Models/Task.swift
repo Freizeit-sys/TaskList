@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Task {
+struct Task: Codable {
     var title: String
     var duedate: Date
     var completed: Bool

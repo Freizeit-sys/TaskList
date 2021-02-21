@@ -8,16 +8,13 @@
 import UIKit
 
 protocol TaskInputAccessoryViewDelegate: class {
+    func didBack()
     func didSave(_ task: Task)
 }
 
-class TaskInputAccessoryView: UIView, UITextFieldDelegate {
+class TaskInputAccessoryView: UIView {
     
     weak var delegate: TaskInputAccessoryViewDelegate?
-    
-    func clearCommentTextField() {
-        textField.text = nil
-    }
     
     let titleLabel: UILabel = {
         let label = UILabel()
@@ -33,8 +30,24 @@ class TaskInputAccessoryView: UIView, UITextFieldDelegate {
         let tf = UITextField()
         tf.placeholder = "New task"
         tf.font = UIFont.systemFont(ofSize: 16)
+        tf.returnKeyType = .done
+        tf.addTarget(self, action: #selector(textFieldEditingChanged(_:)), for: .editingChanged)
         return tf
     }()
+    
+    @objc func textFieldEditingChanged(_ textField: UITextField) {
+        let isEnabled = textField.text == ""
+        toggleSaveButtonIsEnabled(!isEnabled)
+    }
+    
+    private func toggleSaveButtonIsEnabled(_ isEnabled: Bool) {
+        let textColor: UIColor = isEnabled ? .white : .darkGray
+        UIView.transition(with: saveButton, duration: 0.3, options: .curveEaseOut) {
+            self.saveButton.setTitleColor(textColor, for: .normal)
+        } completion: { (finished) in
+            self.saveButton.isEnabled = isEnabled
+        }
+    }
     
     let duedateButton: DueDateButton = {
         let button = DueDateButton()
@@ -44,8 +57,9 @@ class TaskInputAccessoryView: UIView, UITextFieldDelegate {
     let saveButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Save", for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(UIColor.darkGray, for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        button.isEnabled = false
         button.addTarget(self, action: #selector(handleSave), for: .touchUpInside)
         return button
     }()
@@ -64,6 +78,8 @@ class TaskInputAccessoryView: UIView, UITextFieldDelegate {
         backgroundColor = .tertiarySystemBackground
         layer.cornerRadius = 10
         layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        duedateButton.duedate = Date()
+        textField.delegate = self
         
         addSubview(titleLabel)
         addSubview(saveButton)
@@ -77,18 +93,48 @@ class TaskInputAccessoryView: UIView, UITextFieldDelegate {
         textField.anchor(top: titleLabel.bottomAnchor, left: titleLabel.leftAnchor, bottom: nil, right: saveButton.leftAnchor, paddingTop: 16, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 48)
         
         duedateButton.anchor(top: textField.bottomAnchor, left: textField.leftAnchor, bottom: saveButton.bottomAnchor, right: textField.rightAnchor, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: 8, width: 0, height: 36)
-        
-        duedateButton.duedate = Date().today
+    }
+    
+    func clearCommentTextField() {
+        textField.text = nil
+    }
+    
+    private func saveNewTask() {
+        guard let title = textField.text, let duedate = self.duedateButton.duedate else {
+            return print("")
+        }
+        let newTask = Task(title: title, duedate: duedate)
+        delegate?.didSave(newTask)
     }
     
     @objc private func handleSave() {
-        guard let title = textField.text else { return print("Did not entered text") }
-        guard let duedate = self.duedateButton.duedate else { return print("Did not entered date") }
-        
-        let task = Task(title: title, duedate: duedate)
-        delegate?.didSave(task)
+        self.saveNewTask()
     }
 }
+
+extension TaskInputAccessoryView: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField.text != "" {
+            self.saveNewTask()
+            return true
+        }
+        delegate?.didBack()
+        return true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        let maxLength: Int = 20
+        let text = textField.text! + string
+        
+        if text.count <= maxLength {
+            return true
+        }
+        return false
+    }
+}
+
 
 // MARK: - DueDateButton
 

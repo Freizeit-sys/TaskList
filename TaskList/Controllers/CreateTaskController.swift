@@ -9,6 +9,8 @@ import UIKit
 
 class CreateTaskController: UIViewController {
     
+    public var didSaveTask: ((Task) -> ())?
+    
     override var canBecomeFirstResponder: Bool {
         return true
     }
@@ -18,8 +20,8 @@ class CreateTaskController: UIViewController {
     }
     
     lazy var containerView: TaskInputAccessoryView = {
-        // height: contents height
-        let frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 176)
+        // height = contents height
+        let frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 168) // 168
         let view = TaskInputAccessoryView(frame: frame)
         return view
     }()
@@ -48,7 +50,7 @@ class CreateTaskController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        hideKeyboard()
+        self.hideKeyboard()
     }
     
     private func showKeyboard() {
@@ -60,20 +62,14 @@ class CreateTaskController: UIViewController {
     }
 }
 
-extension CreateTaskController: CreateTaskViewDelegate {
+extension CreateTaskController: CreateTaskViewDelegate, TaskInputAccessoryViewDelegate {
     
     func didBack() {
         self.dismiss(animated: true, completion: nil)
     }
-}
-
-extension CreateTaskController: TaskInputAccessoryViewDelegate {
     
     func didSave(_ task: Task) {
-        print(task.title, task.duedate.string(), task.completed)
-        let parentVC = self.parent
-        if parentVC is TaskListController {
-            print("true")
-        }
+        self.didSaveTask?(task)
+        self.dismiss(animated: true, completion: nil)
     }
 }

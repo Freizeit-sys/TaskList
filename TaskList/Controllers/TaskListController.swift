@@ -9,9 +9,10 @@ import UIKit
 
 class TaskListController: UIViewController {
     
-    private var datasource: TaskDataSource!
+    private let datasource = TaskListsDataSource()
     private let cellId = "cellId"
     private let headerId = "headerId"
+    private var headerView: TaskListHeaderView!
     
     private let v = TaskListView()
     
@@ -21,8 +22,6 @@ class TaskListController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.datasource = TaskDataSource()
         
         self.setupViews()
         self.setupNavigationBar()
@@ -48,27 +47,67 @@ class TaskListController: UIViewController {
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.isTranslucent = false
     }
+    
+    private func changeTaskListAndTitle(at index: Int) {
+        let taskList = self.datasource.taskList(at: index)
+        self.headerView.title = taskList?.title
+        
+        self.datasource.changeTaskList(at: index)
+        
+        // Reload data
+        self.v.collectionView.reloadData()
+    }
 }
 
 extension TaskListController: TaskListViewDelegate {
     
     func didShowMenu() {
-        let taskListsVC = TaskListsController()
-        taskListsVC.modalTransitionStyle = .crossDissolve
-        taskListsVC.modalPresentationStyle = .overCurrentContext
-        present(taskListsVC, animated: true, completion: nil)
+        let window = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first
+        let taskListsView = TaskListsView()
+        taskListsView.frame = self.view.frame
+        taskListsView.taskLists = self.datasource.getTaskLists()
+        taskListsView.setupViews()
+        
+        taskListsView.didCreateTaskList = { [weak self] in
+            let createTaskListView = CreateTaskListView()
+            createTaskListView.frame = (self?.view.frame)!
+            createTaskListView.setupViews()
+            window?.addSubview(createTaskListView)
+            
+            createTaskListView.didSaveNewTaskList = { [weak self] taskList in
+                self?.datasource.appendTaskList(taskList)
+                
+                // Change the task list to be displayed
+                let index = (self?.datasource.countTaskList())! - 1
+                self?.changeTaskListAndTitle(at: index)
+            }
+        }
+        
+        taskListsView.didChangeTaskList = { [weak self] index in
+            // Change the task list to be displayed
+            self?.changeTaskListAndTitle(at: index)
+        }
+        
+        window?.addSubview(taskListsView)
     }
     
     func didCreateTask() {
-        print("create task")
         let createTaskVC = CreateTaskController()
+        createTaskVC.didSaveTask = { [weak self] newTask in
+            self?.datasource.appendTask(newTask)
+            self?.v.collectionView.reloadData()
+        }
         createTaskVC.modalTransitionStyle = .crossDissolve
         createTaskVC.modalPresentationStyle = .overCurrentContext
         present(createTaskVC, animated: true, completion: nil)
     }
     
     func didShowOptions() {
-        print("show options")
+        let window = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first
+        let menuView = TaskListMenuView()
+        menuView.frame = self.view.frame
+        menuView.setupViews()
+        window?.addSubview(menuView)
     }
 }
 
@@ -79,7 +118,7 @@ extension TaskListController: UICollectionViewDelegateFlowLayout, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.datasource.count()
+        return self.datasource.countTask()
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -93,9 +132,11 @@ extension TaskListController: UICollectionViewDelegateFlowLayout, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId, for: indexPath) as! TaskListHeaderView
-        header.delegate = self
-        return header
+        headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId, for: indexPath) as? TaskListHeaderView
+        let taskList = self.datasource.selectedTaskList()
+        headerView.title =  taskList.title
+        headerView.delegate = self
+        return headerView
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -131,53 +172,14 @@ extension TaskListController: TaskCellDelegate {
     
     func didCheck(complete: Bool) {
         // change datasource
-        
     }
     
     func didDeleteCell(_ cell: TaskCell) {
         if let indexPath: IndexPath = self.v.collectionView.indexPath(for: cell) {
             self.v.collectionView.performBatchUpdates({
-                self.datasource.delete(at: indexPath.item)
+                self.datasource.removeTask(at: indexPath.item)
                 self.v.collectionView.deleteItems(at: [indexPath])
             }, completion: nil)
         }
     }
 }
-
-//import SwiftUI
-//
-//#if DEBUG
-//struct MainPreview: PreviewProvider {
-//
-//    static var previews: some View {
-//        Group {
-//            ContainerView()
-//                .previewDevice("iPhone 12")
-//                .edgesIgnoringSafeArea(.all)
-//                .environment(\.colorScheme, .light)
-//
-//                //ContainerView()
-//                .previewDevice("iPhone 12")
-//                .edgesIgnoringSafeArea(.all)
-//                .environment(\.colorScheme, .dark)
-//        }
-//    }
-//
-//    struct ContainerView: UIViewControllerRepresentable {
-//
-//        func makeUIViewController(context: Context) -> some UIViewController {
-//
-//            let rootViewController = TaskListController()
-//            let navigationController = UINavigationController(rootViewController: rootViewController)
-//            navigationController.navigationBar.barTintColor = .white
-//            navigationController.navigationBar.shadowImage = UIImage()
-//            navigationController.navigationBar.isTranslucent = false
-//
-//            return navigationController
-//        }
-//
-//        func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
-//        }
-//    }
-//}
-//#endif

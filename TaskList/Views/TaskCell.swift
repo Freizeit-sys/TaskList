@@ -32,12 +32,12 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
             let attributed1: [NSAttributedString.Key: Any] = [
                 .paragraphStyle: paragraphStyle,
                 .foregroundColor: UIColor.black,
-                .font: UIFont.systemFont(ofSize: 16, weight: .medium)
+                .font: UIFont.systemFont(ofSize: 16, weight: .semibold)
             ]
             
             let attributed2: [NSAttributedString.Key: Any] = [
                 .foregroundColor: UIColor.systemGray,
-                .font: UIFont.systemFont(ofSize: 12, weight: .regular)
+                .font: UIFont.systemFont(ofSize: 13, weight: .regular)
             ]
             
             let attributedText = NSMutableAttributedString(string: title, attributes: attributed1)
@@ -55,6 +55,7 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     private let cellContents: UIView = {
         let view = UIView()
         view.backgroundColor = .white
+        view.alpha = 1.0
         view.layer.cornerRadius = 25
         view.layer.applyMaterialShadow(elevation: 4)
         return view
@@ -87,6 +88,7 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     
     let archiveImageView: UIView = {
         let view = ArchiveImageView()
+        view.alpha = 1.0
         return view
     }()
     
@@ -246,6 +248,16 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
         default:
             ()
         }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        // Reset position and alpha
+        let frame = cellContents.frame
+        cellContents.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
+        cellContents.alpha = 1.0
+        archiveImageView.alpha = 1.0
     }
     
     // MARK: - UIGestureRecognizerDelegate

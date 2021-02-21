@@ -20,6 +20,10 @@ class TaskDataSource {
         }
     }
     
+    func save(_ task: Task) {
+        tasks.append(task)
+    }
+    
     func task(at index: Int) -> Task? {
         if tasks.count > index {
             return tasks[index]
