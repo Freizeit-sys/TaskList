@@ -10,6 +10,7 @@ import UIKit
 protocol TaskInputAccessoryViewDelegate: class {
     func didBack()
     func didSave(_ task: Task)
+    func didSelectDueDate()
 }
 
 class TaskInputAccessoryView: UIView {
@@ -35,20 +36,6 @@ class TaskInputAccessoryView: UIView {
         return tf
     }()
     
-    @objc func textFieldEditingChanged(_ textField: UITextField) {
-        let isEnabled = textField.text == ""
-        toggleSaveButtonIsEnabled(!isEnabled)
-    }
-    
-    private func toggleSaveButtonIsEnabled(_ isEnabled: Bool) {
-        let textColor: UIColor = isEnabled ? .white : .darkGray
-        UIView.transition(with: saveButton, duration: 0.3, options: .curveEaseOut) {
-            self.saveButton.setTitleColor(textColor, for: .normal)
-        } completion: { (finished) in
-            self.saveButton.isEnabled = isEnabled
-        }
-    }
-    
     let duedateButton: DueDateButton = {
         let button = DueDateButton()
         return button
@@ -62,6 +49,12 @@ class TaskInputAccessoryView: UIView {
         button.isEnabled = false
         button.addTarget(self, action: #selector(handleSave), for: .touchUpInside)
         return button
+    }()
+    
+    private let tapGesture: UITapGestureRecognizer = {
+        let gesture = UITapGestureRecognizer()
+        gesture.cancelsTouchesInView = false
+        return gesture
     }()
     
     override init(frame: CGRect) {
@@ -93,10 +86,28 @@ class TaskInputAccessoryView: UIView {
         textField.anchor(top: titleLabel.bottomAnchor, left: titleLabel.leftAnchor, bottom: nil, right: saveButton.leftAnchor, paddingTop: 16, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 48)
         
         duedateButton.anchor(top: textField.bottomAnchor, left: textField.leftAnchor, bottom: saveButton.bottomAnchor, right: textField.rightAnchor, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: 8, width: 0, height: 36)
+        
+        tapGesture.addTarget(self, action: #selector(handleTapGesture(_:)))
+        duedateButton.addGestureRecognizer(tapGesture)
     }
     
     func clearCommentTextField() {
         textField.text = nil
+    }
+    
+    @objc
+    private func textFieldEditingChanged(_ textField: UITextField) {
+        let isEnabled = textField.text == ""
+        toggleSaveButtonIsEnabled(!isEnabled)
+    }
+    
+    private func toggleSaveButtonIsEnabled(_ isEnabled: Bool) {
+        let textColor: UIColor = isEnabled ? .white : .darkGray
+        UIView.transition(with: saveButton, duration: 0.3, options: .curveEaseOut) {
+            self.saveButton.setTitleColor(textColor, for: .normal)
+        } completion: { (finished) in
+            self.saveButton.isEnabled = isEnabled
+        }
     }
     
     private func saveNewTask() {
@@ -107,7 +118,13 @@ class TaskInputAccessoryView: UIView {
         delegate?.didSave(newTask)
     }
     
-    @objc private func handleSave() {
+    @objc
+    private func handleTapGesture(_ recognizer: UITapGestureRecognizer) {
+        self.delegate?.didSelectDueDate()
+    }
+    
+    @objc
+    private func handleSave() {
         self.saveNewTask()
     }
 }
@@ -176,12 +193,6 @@ class DueDateButton: UIView {
         button.isEnabled = false
         button.layer.cornerRadius = 4
         return button
-    }()
-    
-    private let tapGesture: UITapGestureRecognizer = {
-        let gesture = UITapGestureRecognizer()
-        gesture.cancelsTouchesInView = false
-        return gesture
     }()
     
     override init(frame: CGRect) {

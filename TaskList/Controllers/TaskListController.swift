@@ -107,6 +107,23 @@ extension TaskListController: TaskListViewDelegate {
         let menuView = TaskListMenuView()
         menuView.frame = self.view.frame
         menuView.setupViews()
+        
+//        menuView.didSortList = { [weak self] soryType in
+//
+//        }
+        
+//        menuView.didRenameList = { [weak self] in
+//            self?.datasource.renameTaskList("")
+//            self?.datasource.saveTaskLists()
+//        }
+        
+        menuView.didDeleteList = { [weak self] in
+            self?.datasource.removeTaskList()
+            
+            // Change to the initial list
+            self?.changeTaskListAndTitle(at: 0)
+        }
+        
         window?.addSubview(menuView)
     }
 }

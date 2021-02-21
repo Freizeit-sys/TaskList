@@ -7,12 +7,35 @@
 
 import UIKit
 
+enum SortType: Int {
+    case myOrder, date
+}
+
+extension UserDefaults {
+    
+    func setSortType(_ type: SortType?, forKey key: String) {
+        set(type?.rawValue, forKey: key)
+    }
+    
+    func getSortType(forKey key: String) -> SortType? {
+        if let rawValue = object(forKey: key) as? Int {
+            return SortType(rawValue: rawValue)
+        }
+        return nil
+    }
+}
+
 class TaskListMenuView: UIView {
     
-    private let itemCount: Int = 4
+    var didSortList: ((SortType) -> ())?
+    var didRenameList: ((String) -> ())?
+    var didDeleteList: (() -> ())?
+    
+    private var sortType: SortType = .myOrder
+    
+    private let cellDatas: [[String]] = [["My order", "Date"], ["Rename list", "Delete list"]]
     
     private let margin: CGFloat = 0.0
-    private let padding: CGFloat = 8.0
     private let cellHeight: CGFloat = 48.0
     private let headerHeight: CGFloat = 40.0
     private let footerHeight: CGFloat = 1.0
@@ -55,6 +78,8 @@ class TaskListMenuView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
+        self.loadSortType()
     }
     
     required init?(coder: NSCoder) {
@@ -65,14 +90,21 @@ class TaskListMenuView: UIView {
         overlayView.frame = self.frame
         self.addSubview(overlayView)
         
+        let count = self.cellDatas.flatMap({ $0 }).count
+        let cellsHeight: CGFloat = CGFloat(count) * cellHeight
         let bottomInset = UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 0
-        let cellsHeight: CGFloat = CGFloat(itemCount) * cellHeight
-        let height: CGFloat = cellsHeight + headerHeight + (padding * 2) + bottomInset
+        
+        let height: CGFloat = cellsHeight + headerHeight + bottomInset
+        
         collectionView.frame = CGRect(x: 0, y: frame.height, width: frame.width, height: height)
+        
         collectionView.register(TaskListMenuCell.self, forCellWithReuseIdentifier: cellId)
         collectionView.register(TaskListMenuHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
+        collectionView.register(TaskListMenuFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: footerId)
+        
         collectionView.delegate = self
         collectionView.dataSource = self
+        
         self.addSubview(collectionView)
         
         tapGesture.addTarget(self, action: #selector(handleTapGesture(_:)))
@@ -87,6 +119,17 @@ class TaskListMenuView: UIView {
         }, completion: nil)
         
         self.originalFrame = collectionView.frame
+    }
+    
+    private func loadSortType() {
+        guard let sortType = UserDefaults.standard.getSortType(forKey: "sortType") else {
+            return
+        }
+        self.sortType = sortType
+    }
+    
+    private func saveSortType() {
+        UserDefaults.standard.setSortType(self.sortType, forKey: "sortType")
     }
     
     private func dismiss() {
@@ -151,25 +194,41 @@ extension TaskListMenuView: UICollectionViewDelegate, UICollectionViewDataSource
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 2
+        return self.cellDatas.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if section == 0 {
-            return 2
-        }
-        return self.itemCount
+        return self.cellDatas[section].count
     }
-    
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! TaskListMenuCell
+        
+        let section = indexPath.section
+        cell.cellType = section == 0 ? .radio : .normal
+        
+        let text = cellDatas[section][indexPath.item]
+        cell.textLabel.text = text
+        
+        if sortType == .myOrder && indexPath.item == 0 {
+            cell.toggleRadioButton()
+        }
+        
+        if sortType == .date && indexPath.item == 1 {
+            cell.toggleRadioButton()
+        }
+        
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId, for: indexPath) as! TaskListMenuHeaderView
-        return headerView
+        if kind == UICollectionView.elementKindSectionHeader {
+            let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId, for: indexPath) as! TaskListMenuHeaderView
+            return headerView
+        }
+        
+        let footerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: footerId, for: indexPath)
+        return footerView
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -182,82 +241,47 @@ extension TaskListMenuView: UICollectionViewDelegate, UICollectionViewDataSource
         }
         return .zero
     }
-}
-
-
-
-
-
-
-class TaskListMenuCell: UICollectionViewCell {
     
-    private let radioButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.backgroundColor = .red
-        button.tintColor = .black
-        //button.alpha = 0.0
-        button.isEnabled = false
-        return button
-    }()
-    
-    private let textLabel: UILabel = {
-        let label = UILabel()
-        label.text = "text text"
-        label.textColor = .black
-        label.textAlignment = .left
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.numberOfLines = 1
-        return label
-    }()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        self.commonInit()
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        if section == 0 {
+            return .init(width: frame.width, height: self.footerHeight)
+        }
+        return .zero
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func commonInit() {
-        addSubview(radioButton)
-        addSubview(textLabel)
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let section = indexPath.section
+        let index = indexPath.item
         
-        radioButton.anchor(top: nil, left: leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 24, paddingBottom: 0, paddingRight: 0, width: 24, height: 24)
-        radioButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        let previousIndex = index == 0 ? 1 : 0
+        let previousIndexPath = IndexPath(item: previousIndex, section: 0)
+        let previousCell = collectionView.cellForItem(at: previousIndexPath) as! TaskListMenuCell
         
-        textLabel.anchor(top: topAnchor, left: radioButton.rightAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 10, paddingBottom: 0, paddingRight: 24, width: 0, height: 0)
-    }
-}
-
-
-class TaskListMenuHeaderView: UICollectionReusableView {
-    
-    private let label: UILabel = {
-        let label = UILabel()
-        label.text = "Sort by"
-        label.textColor = .black
-        label.textAlignment = .left
-        label.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
-        label.numberOfLines = 1
-        return label
-    }()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+        let cell = collectionView.cellForItem(at: indexPath) as! TaskListMenuCell
         
-        self.commonInit()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func commonInit() {
-        backgroundColor = .clear
+        switch section {
+        case 0:
+            // Deselect previous cell
+            previousCell.toggleRadioButton()
+            // Select cell
+            cell.toggleRadioButton()
+            
+            // Sorting the list
+            self.sortType = index == 0 ? .myOrder : .date
+            self.didSortList?(self.sortType)
+            self.saveSortType()
+        case 1: ()
+            if index == 0 {
+                // Rename the list
+                self.didRenameList?("title")
+            } else {
+                // Delete the list
+                self.didDeleteList?()
+            }
+        default:
+            break
+        }
         
-        addSubview(label)
-        label.fillSuperView(.init(top: 0, left: 24, bottom: 0, right: 0))
+        self.dismiss()
     }
 }

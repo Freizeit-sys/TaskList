@@ -11,6 +11,7 @@ struct Task: Codable {
     var title: String
     var duedate: Date
     var completed: Bool
+    var timestamp: Date = Date()
     
     init(title: String, duedate: Date, completed: Bool = false) {
         self.title = title

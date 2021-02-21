@@ -26,6 +26,7 @@ class TaskListsDataSource {
     
     private var selectedIndex: Int = 0
     private var taskLists: [TaskList] = []
+    private var currentTaskList: TaskList!
     
     // MARK: - Initializer
     
@@ -147,6 +148,25 @@ class TaskListsDataSource {
         
         // Save selection
         saveTaskLists()
+    }
+    
+    func sortingTaskList(_ type: SortType) {
+        switch type {
+        case .myOrder:
+//            taskLists.map { $0.tasks.sorted { (t1, t2) -> Bool in
+//                return t1.timestamp.compare(t2.timestamp) == .orderedAscending
+//            }}
+            ()
+        case .date:
+//            taskLists.map { $0.tasks.sorted { (t1, t2) -> Bool in
+//                return t1.duedate.compare(t2.duedate) == .orderedAscending
+//            }}
+            ()
+        }
+    }
+    
+    func renameTaskListTitle(_ title: String) {
+        self.taskLists[selectedIndex].title = title
     }
     
     // MARK: - Task Methods
