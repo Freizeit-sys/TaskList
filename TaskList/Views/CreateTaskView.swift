@@ -21,6 +21,11 @@ class CreateTaskView: UIView {
         return v
     }()
     
+    private let calendarPickerView: CalendarPickerView = {
+        let pickerView = CalendarPickerView()
+        return pickerView
+    }()
+    
     private let tapGesture: UITapGestureRecognizer = {
         let gesture = UITapGestureRecognizer()
         gesture.cancelsTouchesInView = false
@@ -39,8 +44,11 @@ class CreateTaskView: UIView {
     
     private func commonInit() {
         addSubview(overlayView)
+        addSubview(calendarPickerView)
         
         overlayView.fillSuperView()
+        
+//        calendarPickerView.anchor(top: <#T##NSLayoutYAxisAnchor?#>, left: <#T##NSLayoutXAxisAnchor?#>, bottom: <#T##NSLayoutYAxisAnchor?#>, right: <#T##NSLayoutXAxisAnchor?#>, paddingTop: <#T##CGFloat#>, paddingLeft: <#T##CGFloat#>, paddingBottom: <#T##CGFloat#>, paddingRight: <#T##CGFloat#>, width: <#T##CGFloat#>, height: <#T##CGFloat#>)
     
         tapGesture.addTarget(self, action: #selector(handleTapGesture))
         overlayView.addGestureRecognizer(tapGesture)

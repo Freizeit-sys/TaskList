@@ -15,10 +15,10 @@ class TaskListsView: UIView {
     
     weak var delegate: TaskListsViewDelegate?
     
-    var taskLists: [TaskList]!
+    var datasource: TaskListsDataSource!
     
     var didCreateTaskList: (() -> ())?
-    var didChangeTaskList: ((_ index: Int) -> ())?
+    var didChangeTaskList: ((Int) -> ())?
     
     private let margin: CGFloat = 0.0
     private let padding: CGFloat = 8.0
@@ -73,7 +73,7 @@ class TaskListsView: UIView {
         self.addSubview(overlayView)
         
         let bottomInset = UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 0
-        let cellCount: CGFloat = CGFloat(taskLists.count)
+        let cellCount: CGFloat = CGFloat(self.datasource.countTaskList())
         let height: CGFloat = (cellCount * cellHeight) + footerHeight + (padding * 2) + bottomInset
         collectionView.frame = CGRect(x: 0, y: frame.height, width: frame.width, height: height)
         collectionView.register(TaskListsCell.self, forCellWithReuseIdentifier: cellId)
@@ -162,16 +162,16 @@ extension TaskListsView: UICollectionViewDelegate, UICollectionViewDataSource, U
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return taskLists.count
+        return self.datasource.countTaskList()
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! TaskListsCell
         
-        let taskList = taskLists[indexPath.item]
+        let taskList = self.datasource.taskList(at: indexPath.item)
         cell.taskList = taskList
         
-        let isSelected = taskList.selected
+        let isSelected = self.datasource.isSelectedTaskList(at: indexPath.item)
         
         if isSelected {
             cell.selectedView.alpha = 0.2
@@ -210,6 +210,8 @@ extension TaskListsView: TaskListsFooterViewDelegate {
             self.collectionView.frame = CGRect(x: 0, y: self.frame.height, width: self.frame.width, height: height)
         } completion: { (finished) in
             self.removeFromSuperview()
+            
+            
             self.didCreateTaskList?()
         }
     }

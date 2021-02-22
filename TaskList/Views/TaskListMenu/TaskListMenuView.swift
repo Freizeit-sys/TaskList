@@ -27,9 +27,11 @@ extension UserDefaults {
 
 class TaskListMenuView: UIView {
     
+    var selectedTaskList: TaskList!
+    
     var didSortList: ((SortType) -> ())?
-    var didRenameList: ((String) -> ())?
-    var didDeleteList: (() -> ())?
+    var didRenameList: ((TaskList) -> ())?
+    var didDeleteList: ((TaskList) -> ())?
     
     private var sortType: SortType = .myOrder
     
@@ -273,10 +275,10 @@ extension TaskListMenuView: UICollectionViewDelegate, UICollectionViewDataSource
         case 1: ()
             if index == 0 {
                 // Rename the list
-                self.didRenameList?("title")
+                //self.didRenameList?()
             } else {
                 // Delete the list
-                self.didDeleteList?()
+                self.didDeleteList?(self.selectedTaskList)
             }
         default:
             break

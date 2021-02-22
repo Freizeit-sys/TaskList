@@ -62,9 +62,9 @@ class CreateTaskListView: UIView {
         }, completion: nil)
     }
     
-    private func saveNewTaskList() {
-        guard let title = inputFormView.textField.text else { return }
-        let taskList = TaskList(title: title)
+    private func saveNewTaskList(_ text: String) {
+        let id = self.datasource.countTaskList()
+        let taskList = TaskList(id: id, title: text)
         self.didSaveNewTaskList?(taskList)
     }
     
@@ -133,8 +133,8 @@ class CreateTaskListView: UIView {
 
 extension CreateTaskListView: TaskListInputFormViewDelegate {
     
-    func didCreate() {
-        self.saveNewTaskList()
+    func didCreate(text: String) {
+        self.saveNewTaskList(text)
         self.dismiss()
     }
     
@@ -149,7 +149,8 @@ extension CreateTaskListView: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField.text != "" {
-            self.saveNewTaskList()
+            guard let text = textField.text else { return false }
+            self.saveNewTaskList(text)
             self.dismiss()
             return true
         }

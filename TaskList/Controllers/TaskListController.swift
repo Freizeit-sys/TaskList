@@ -48,14 +48,9 @@ class TaskListController: UIViewController {
         navigationController?.navigationBar.isTranslucent = false
     }
     
-    private func changeTaskListAndTitle(at index: Int) {
-        let taskList = self.datasource.taskList(at: index)
-        self.headerView.title = taskList?.title
-        
-        self.datasource.changeTaskList(at: index)
-        
-        // Reload data
-        self.v.collectionView.reloadData()
+    private func changeTaskListAndTitle(_ id: Int, title: String? = nil) {
+        self.headerView.title = title
+        self.datasource.changeTaskList(id: id)
     }
 }
 
@@ -64,28 +59,36 @@ extension TaskListController: TaskListViewDelegate {
     func didShowMenu() {
         let window = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first
         let taskListsView = TaskListsView()
+        taskListsView.datasource = self.datasource
         taskListsView.frame = self.view.frame
-        taskListsView.taskLists = self.datasource.getTaskLists()
         taskListsView.setupViews()
         
+        // Show Create Task List View
         taskListsView.didCreateTaskList = { [weak self] in
             let createTaskListView = CreateTaskListView()
+            createTaskListView.datasource = self?.datasource
             createTaskListView.frame = (self?.view.frame)!
             createTaskListView.setupViews()
             window?.addSubview(createTaskListView)
             
             createTaskListView.didSaveNewTaskList = { [weak self] taskList in
                 self?.datasource.appendTaskList(taskList)
+                self?.datasource.saveTaskLists()
                 
                 // Change the task list to be displayed
-                let index = (self?.datasource.countTaskList())! - 1
-                self?.changeTaskListAndTitle(at: index)
+                self?.changeTaskListAndTitle(taskList.id, title: taskList.title)
+                
+                // Reload data
+                self?.v.collectionView.reloadData()
             }
         }
         
-        taskListsView.didChangeTaskList = { [weak self] index in
+        taskListsView.didChangeTaskList = { [weak self] id in
             // Change the task list to be displayed
-            self?.changeTaskListAndTitle(at: index)
+            self?.changeTaskListAndTitle(id)
+            
+            // Reload data
+            self?.v.collectionView.reloadData()
         }
         
         window?.addSubview(taskListsView)
@@ -105,23 +108,40 @@ extension TaskListController: TaskListViewDelegate {
     func didShowOptions() {
         let window = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first
         let menuView = TaskListMenuView()
+        menuView.selectedTaskList = self.datasource
         menuView.frame = self.view.frame
         menuView.setupViews()
         
-//        menuView.didSortList = { [weak self] soryType in
-//
-//        }
+        menuView.didSortList = { [weak self] soryType in
+            self?.datasource.sortTaskList(soryType)
+            self?.datasource.saveTaskLists()
+            
+            // Reload data
+            self?.v.collectionView.reloadData()
+        }
         
-//        menuView.didRenameList = { [weak self] in
-//            self?.datasource.renameTaskList("")
-//            self?.datasource.saveTaskLists()
-//        }
+        menuView.didRenameList = { [weak self] taskList in
+            self?.datasource.renameTaskList(taskList.title)
+            self?.datasource.saveTaskLists()
+            
+            self?.changeTaskListAndTitle(taskList.id, title: taskList.title)
+            
+            // Reload data
+            self?.v.collectionView.reloadData()
+        }
         
-        menuView.didDeleteList = { [weak self] in
-            self?.datasource.removeTaskList()
+        menuView.didDeleteList = { [weak self] taskList in
+            self?.datasource.removeTaskList(id: taskList.id)
+            self?.datasource.saveTaskLists()
+            
+//            let undoSnackBar = UndoSnackBar()
+//            undoSnackBar.text = taskList.title
+//            undoSnackBar.frame = self?.view.frame
             
             // Change to the initial list
-            self?.changeTaskListAndTitle(at: 0)
+            self?.changeTaskListAndTitle(0)
+            // Reload data
+            self?.v.collectionView.reloadData()
         }
         
         window?.addSubview(menuView)
@@ -151,7 +171,7 @@ extension TaskListController: UICollectionViewDelegateFlowLayout, UICollectionVi
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId, for: indexPath) as? TaskListHeaderView
         let taskList = self.datasource.selectedTaskList()
-        headerView.title =  taskList.title
+        headerView.title = taskList.title
         headerView.delegate = self
         return headerView
     }

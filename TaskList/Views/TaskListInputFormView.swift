@@ -8,7 +8,7 @@
 import UIKit
 
 protocol TaskListInputFormViewDelegate: class {
-    func didCreate()
+    func didCreate(text: String)
     func didCancel()
 }
 
@@ -106,9 +106,11 @@ class TaskListInputFormView: UIView {
     
     @objc
     private func handleCreate() {
+        guard let text = self.textField.text else { return }
+        delegate?.didCreate(text: text)
+        
         // Measures against duplication of processing
         createButton.isEnabled = false
-        delegate?.didCreate()
     }
     
     @objc
