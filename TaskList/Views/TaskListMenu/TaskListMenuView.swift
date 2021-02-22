@@ -27,7 +27,7 @@ extension UserDefaults {
 
 class TaskListMenuView: UIView {
     
-    var selectedTaskList: TaskList!
+    var taskList: TaskList?
     
     var didSortList: ((SortType) -> ())?
     var didRenameList: ((TaskList) -> ())?
@@ -134,7 +134,7 @@ class TaskListMenuView: UIView {
         UserDefaults.standard.setSortType(self.sortType, forKey: "sortType")
     }
     
-    private func dismiss() {
+    private func dismiss(completion: @escaping () -> ()) {
         let height: CGFloat = self.originalFrame.height
     
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 1.0, options: .curveEaseInOut) {
@@ -142,12 +142,13 @@ class TaskListMenuView: UIView {
             self.collectionView.frame = CGRect(x: 0, y: self.frame.height, width: self.frame.width, height: height)
         } completion: { (finished) in
             self.removeFromSuperview()
+            completion()
         }
     }
     
     @objc
     private func handleTapGesture(_ recognizer: UITapGestureRecognizer) {
-        self.dismiss()
+        self.dismiss { return }
     }
     
     @objc
@@ -275,15 +276,17 @@ extension TaskListMenuView: UICollectionViewDelegate, UICollectionViewDataSource
         case 1: ()
             if index == 0 {
                 // Rename the list
-                //self.didRenameList?()
+                guard let _taskList = self.taskList else { return }
+                self.dismiss { self.didRenameList?(_taskList) }
             } else {
                 // Delete the list
-                self.didDeleteList?(self.selectedTaskList)
+                guard let _taskList = self.taskList else { return }
+                self.didDeleteList?(_taskList)
+                
+                self.dismiss { self.didDeleteList?(_taskList) }
             }
         default:
             break
         }
-        
-        self.dismiss()
     }
 }

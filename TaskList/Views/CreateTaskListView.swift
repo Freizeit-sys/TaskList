@@ -9,9 +9,20 @@ import UIKit
 
 class CreateTaskListView: UIView {
     
-    var datasource: TaskListsDataSource!
+    var taskList: TaskList? {
+        didSet {
+            if let _taskList = self.taskList {
+                inputFormView.inputFormType = .rename
+                let title = _taskList.title
+                inputFormView.textField.text = title
+            } else {
+                inputFormView.inputFormType = .create
+            }
+        }
+    }
     
     var didSaveNewTaskList: ((TaskList) -> ())?
+    var didSaveRenameTaskList: ((TaskList) -> ())?
     
     private let overlayView: UIView = {
         let view = UIView()
@@ -63,9 +74,13 @@ class CreateTaskListView: UIView {
     }
     
     private func saveNewTaskList(_ text: String) {
-        let id = self.datasource.countTaskList()
-        let taskList = TaskList(id: id, title: text)
+        let taskList = TaskList(title: text)
         self.didSaveNewTaskList?(taskList)
+    }
+    
+    private func saveRenameTaskList(_ text: String) {
+        let taskList = TaskList(title: text)
+        self.didSaveRenameTaskList?(taskList)
     }
     
     private func dismiss() {
@@ -135,6 +150,11 @@ extension CreateTaskListView: TaskListInputFormViewDelegate {
     
     func didCreate(text: String) {
         self.saveNewTaskList(text)
+        self.dismiss()
+    }
+    
+    func didRename(text: String) {
+        self.saveRenameTaskList(text)
         self.dismiss()
     }
     

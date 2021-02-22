@@ -9,10 +9,33 @@ import UIKit
 
 protocol TaskListInputFormViewDelegate: class {
     func didCreate(text: String)
+    func didRename(text: String)
     func didCancel()
 }
 
 class TaskListInputFormView: UIView {
+    
+    enum InputFormType {
+        case create, rename
+    }
+    
+    var inputFormType: InputFormType? {
+        didSet {
+            guard let _inputFormType = self.inputFormType else { return }
+            switch _inputFormType {
+            case .create:
+                titleLabel.text = "Create new task list"
+                createRenameButton.setTitle("Create", for: .normal)
+                // Disable buttons at first.
+                self.toggleCreateButtonIsEnable(false, animated: false)
+            case .rename:
+                titleLabel.text = "Rename task list"
+                createRenameButton.setTitle("Rename", for: .normal)
+                // Enabled buttons at first.
+                self.toggleCreateButtonIsEnable(true, animated: false)
+            }
+        }
+    }
     
     weak var delegate: TaskListInputFormViewDelegate?
     
@@ -28,6 +51,7 @@ class TaskListInputFormView: UIView {
     
     let textField: UITextField = {
         let tf = UITextField()
+        tf.backgroundColor = .clear
         tf.textColor = .black
         tf.borderStyle = .roundedRect
         tf.placeholder = "Enter list name"
@@ -36,13 +60,11 @@ class TaskListInputFormView: UIView {
         return tf
     }()
     
-    private let createButton: UIButton = {
+    private let createRenameButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Create", for: .normal)
         button.setTitleColor(.lightGray, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
-        button.isEnabled = false
-        button.addTarget(self, action: #selector(handleCreate), for: .touchUpInside)
+        button.addTarget(self, action: #selector(handleCreateRename), for: .touchUpInside)
         return button
     }()
     
@@ -72,17 +94,17 @@ class TaskListInputFormView: UIView {
         layer.masksToBounds = false
         
         addSubview(titleLabel)
-        addSubview(createButton)
+        addSubview(createRenameButton)
         addSubview(cancelButton)
         addSubview(textField)
         
         titleLabel.anchor(top: topAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 24, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         
-        createButton.anchor(top: nil, left: nil, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 20, paddingRight: 36, width: 0, height: 0)
+        createRenameButton.anchor(top: nil, left: nil, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 20, paddingRight: 36, width: 0, height: 0)
         
-        cancelButton.anchor(top: nil, left: nil, bottom: createButton.bottomAnchor, right: createButton.leftAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 24, width: 0, height: 0)
+        cancelButton.anchor(top: nil, left: nil, bottom: createRenameButton.bottomAnchor, right: createRenameButton.leftAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 24, width: 0, height: 0)
         
-        createButton.sizeToFit()
+        createRenameButton.sizeToFit()
         cancelButton.sizeToFit()
         
         textField.anchor(top: nil, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 0, paddingLeft: 32, paddingBottom: 0, paddingRight: 32, width: 0, height: 48)
@@ -95,22 +117,29 @@ class TaskListInputFormView: UIView {
         toggleCreateButtonIsEnable(!isEnabled)
     }
     
-    private func toggleCreateButtonIsEnable(_ isEnabled: Bool) {
+    private func toggleCreateButtonIsEnable(_ isEnabled: Bool, animated: Bool = true) {
         let textColor: UIColor = isEnabled ? .black : .lightGray
-        UIView.transition(with: createButton, duration: 0.3, options: .curveEaseOut) {
-            self.createButton.setTitleColor(textColor, for: .normal)
+        UIView.transition(with: createRenameButton, duration: 0.3, options: .curveEaseOut) {
+            self.createRenameButton.setTitleColor(textColor, for: .normal)
         } completion: { (finished) in
-            self.createButton.isEnabled = isEnabled
+            self.createRenameButton.isEnabled = isEnabled
         }
     }
     
     @objc
-    private func handleCreate() {
+    private func handleCreateRename() {
         guard let text = self.textField.text else { return }
-        delegate?.didCreate(text: text)
+        
+        guard let _inputFormType = self.inputFormType else { return }
+        switch _inputFormType {
+        case .create:
+            delegate?.didCreate(text: text)
+        case .rename:
+            delegate?.didRename(text: text)
+        }
         
         // Measures against duplication of processing
-        createButton.isEnabled = false
+        createRenameButton.isEnabled = false
     }
     
     @objc

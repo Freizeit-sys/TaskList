@@ -8,13 +8,21 @@
 import Foundation
 
 struct TaskList: Codable {
-    var id: Int
     var title: String
     var tasks: [Task]
     
-    init(id: Int, title: String, tasks: [Task] = []) {
-        self.id = id
+    init(title: String, tasks: [Task] = []) {
         self.title = title
         self.tasks = tasks
     }
+    
+//    var id: Int
+//    var title: String
+//    var tasks: [Task]
+//
+//    init(id: Int, title: String, tasks: [Task] = []) {
+//        self.id = id
+//        self.title = title
+//        self.tasks = tasks
+//    }
 }

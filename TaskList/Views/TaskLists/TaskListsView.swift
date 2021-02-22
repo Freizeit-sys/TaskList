@@ -18,7 +18,7 @@ class TaskListsView: UIView {
     var datasource: TaskListsDataSource!
     
     var didCreateTaskList: (() -> ())?
-    var didChangeTaskList: ((Int) -> ())?
+    var didChangeTaskList: ((String, Int) -> ())?
     
     private let margin: CGFloat = 0.0
     private let padding: CGFloat = 8.0
@@ -195,7 +195,8 @@ extension TaskListsView: UICollectionViewDelegate, UICollectionViewDataSource, U
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        self.didChangeTaskList?(indexPath.item)
+        let selectedTaskList = self.datasource.selectedTaskList()
+        self.didChangeTaskList?(selectedTaskList.title, indexPath.item)
         self.dismiss()
     }
 }
