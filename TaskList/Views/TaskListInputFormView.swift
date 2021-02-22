@@ -42,7 +42,7 @@ class TaskListInputFormView: UIView {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Create new task list"
-        label.textColor = .black
+        label.textColor = UIColor.scheme.label
         label.textAlignment = .center
         label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
         label.numberOfLines = 1
@@ -52,7 +52,7 @@ class TaskListInputFormView: UIView {
     let textField: UITextField = {
         let tf = UITextField()
         tf.backgroundColor = .clear
-        tf.textColor = .black
+        tf.textColor = UIColor.scheme.label
         tf.borderStyle = .roundedRect
         tf.placeholder = "Enter list name"
         tf.returnKeyType = .done
@@ -62,7 +62,7 @@ class TaskListInputFormView: UIView {
     
     private let createRenameButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitleColor(.lightGray, for: .normal)
+        button.setTitleColor(UIColor.scheme.button, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         button.addTarget(self, action: #selector(handleCreateRename), for: .touchUpInside)
         return button
@@ -71,7 +71,7 @@ class TaskListInputFormView: UIView {
     private let cancelButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Cancel", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(UIColor.scheme.button, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         button.addTarget(self, action: #selector(handleCancel), for: .touchUpInside)
         return button

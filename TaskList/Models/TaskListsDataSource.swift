@@ -12,7 +12,7 @@ class TaskListsDataSource {
     private let fileManager = FileManager.default
     private let filename = "task_lists.json"
     
-    private var selectedID: Int = 0
+    private var selectedIndex: Int = 0
     private var taskLists: [TaskList] = []
     
     init() {
@@ -24,7 +24,7 @@ class TaskListsDataSource {
             // Load task_list.json
             self.fetchTaskLists()
             // Load selected Task List
-            self.loadSelectedID()
+            self.loadSelectedIndex()
         } else {
             // Create task_list.json
             let taskList = TaskList(title: "Today Tasks")
@@ -32,16 +32,16 @@ class TaskListsDataSource {
             self.saveTaskLists()
             
             // Save selected Task List
-            self.saveSelectedID()
+            self.saveSelectedIndex()
         }
     }
     
-    private func loadSelectedID() {
-        self.selectedID = UserDefaults.standard.integer(forKey: "selectedID")
+    private func loadSelectedIndex() {
+        self.selectedIndex = UserDefaults.standard.integer(forKey: "selectedID")
     }
     
-    private func saveSelectedID() {
-        UserDefaults.standard.setValue(self.selectedID, forKey: "selectedID")
+    private func saveSelectedIndex() {
+        UserDefaults.standard.setValue(self.selectedIndex, forKey: "selectedID")
     }
     
     private func fetchTaskLists() {
@@ -105,41 +105,58 @@ class TaskListsDataSource {
     }
     
     func removeTaskList() {
-        self.taskLists.remove(at: selectedID)
+        self.taskLists.remove(at: selectedIndex)
         self.saveTaskLists()
     }
     
     func changeTaskList(at index: Int) {
-        self.selectedID = index
-        self.saveSelectedID()
+        self.selectedIndex = index
+        self.saveSelectedIndex()
     }
     
     func sortTaskList(_ type: SortType) {
         switch type {
         case .myOrder:
-            ()
+            
+            let orderedAscending = taskLists.map { $0.tasks.sorted { (t1, t2) -> Bool in
+                return t1.timestamp.compare(t2.timestamp) == .orderedAscending
+            }}
+            
+            print(orderedAscending)
+            
         case .date:
-            ()
+            
+            let orderedAscending = taskLists.map { $0.tasks.sorted { (t1, t2) -> Bool in
+                return t1.duedate.compare(t2.duedate) == .orderedAscending
+            }}
+            
+            print(orderedAscending)
         }
+        
+        self.saveTaskLists()
     }
     
     func renameTaskList(_ title: String) {
-        self.taskLists[selectedID].title = title
+        self.taskLists[selectedIndex].title = title
         self.saveTaskLists()
     }
     
     func selectedTaskList() -> TaskList {
-        return self.taskLists[selectedID]
+        return self.taskLists[selectedIndex]
     }
     
     func isSelectedTaskList(at index: Int) -> Bool {
-        return self.selectedID == index
+        return self.selectedIndex == index
+    }
+    
+    func isInitialTaskList() -> Bool {
+        return selectedIndex == 0
     }
     
     // MARK: - Task Methods
     
     func task(at index: Int) -> Task? {
-        let taskList = self.taskLists[selectedID]
+        let taskList = self.taskLists[selectedIndex]
         if taskList.tasks.count > index {
             return taskList.tasks[index]
         }
@@ -147,17 +164,17 @@ class TaskListsDataSource {
     }
     
     func countTask() -> Int {
-        let taskList = self.taskLists[selectedID]
+        let taskList = self.taskLists[selectedIndex]
         return taskList.tasks.count
     }
     
     func appendTask(_ task: Task) {
-        self.taskLists[selectedID].tasks.append(task)
+        self.taskLists[selectedIndex].tasks.append(task)
         self.saveTaskLists()
     }
     
     func removeTask(at index: Int) {
-        self.taskLists[selectedID].tasks.remove(at: index)
+        self.taskLists[selectedIndex].tasks.remove(at: index)
         self.saveTaskLists()
     }
 }

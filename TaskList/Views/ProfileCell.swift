@@ -26,14 +26,14 @@ class ProfileCell: UICollectionViewCell {
     let iconImageView: UIImageView = {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
-        iv.tintColor = .lightGray
+        iv.tintColor = UIColor.scheme.icon
         iv.clipsToBounds = true
         return iv
     }()
     
     let titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = UIColor.scheme.label
         label.textAlignment = .left
         label.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
         label.lineBreakMode = .byWordWrapping

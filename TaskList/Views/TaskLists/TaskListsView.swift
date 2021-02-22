@@ -39,7 +39,7 @@ class TaskListsView: UIView {
     
     private let collectionView: UICollectionView = {
         let cv = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-        cv.backgroundColor = .white
+        cv.backgroundColor = UIColor.scheme.background
         cv.showsVerticalScrollIndicator = false
         cv.isScrollEnabled = false
         cv.layer.cornerRadius = 10

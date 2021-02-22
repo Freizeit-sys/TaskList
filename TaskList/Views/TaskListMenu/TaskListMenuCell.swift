@@ -39,7 +39,7 @@ class TaskListMenuCell: UICollectionViewCell {
         let button = UIButton(type: .system)
         let image = UIImage(named: "radio_unchecked")?.withRenderingMode(.alwaysTemplate)
         button.setImage(image, for: .normal)
-        button.tintColor = .gray
+        button.tintColor = UIColor.scheme.primary
         button.contentEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
         button.alpha = 0.0
         button.isEnabled = false
@@ -49,7 +49,7 @@ class TaskListMenuCell: UICollectionViewCell {
     let textLabel: UILabel = {
         let label = UILabel()
         label.text = "text text"
-        label.textColor = .black
+        label.textColor = UIColor.scheme.label
         label.textAlignment = .left
         label.font = UIFont.systemFont(ofSize: 14)
         label.numberOfLines = 1
@@ -109,7 +109,7 @@ class TaskListMenuCell: UICollectionViewCell {
         
         let imageName = radioButton.isEnabled ? "radio_checked" : "radio_unchecked"
         let image = UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate)
-        let color = radioButton.isEnabled ? UIColor.rgb(red: 46, green: 88, blue: 226) : UIColor.gray
+        let color = radioButton.isEnabled ? UIColor.scheme.primary : UIColor.gray
         
         self.radioButton.tintColor = color
         self.radioButton.setImage(image, for: .normal)

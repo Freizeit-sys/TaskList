@@ -11,8 +11,7 @@ class CustomTabBar: UIView {
     
     let menuButton: UIButton = {
         let button = UIButton(type: .system)
-        //button.backgroundColor = .systemBackground
-        button.tintColor = .black
+        button.tintColor = UIColor.scheme.button
         let image = UIImage(named: "menu")?.withRenderingMode(.alwaysTemplate)
         button.setImage(image, for: .normal)
         return button
@@ -21,7 +20,7 @@ class CustomTabBar: UIView {
     let createTaskButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .rgb(red: 46, green: 88, blue: 226)
+        button.backgroundColor = UIColor.scheme.primary
         button.tintColor = .white
         button.setTitle("Create Task", for: .normal)
         button.setTitleColor(.white, for: .normal)
@@ -35,8 +34,7 @@ class CustomTabBar: UIView {
     
     let optionsButton: UIButton = {
         let button = UIButton(type: .system)
-        //button.backgroundColor = .systemBackground
-        button.tintColor = .black
+        button.tintColor = UIColor.scheme.button
         let image = UIImage(named: "options")?.withRenderingMode(.alwaysTemplate)
         button.setImage(image, for: .normal)
         return button

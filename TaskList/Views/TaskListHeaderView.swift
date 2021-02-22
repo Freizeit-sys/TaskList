@@ -20,12 +20,12 @@ class TaskListHeaderView: UICollectionReusableView {
             guard let title = self.title else { return }
             
             let attributes1: [NSAttributedString.Key: Any] = [
-                .foregroundColor: UIColor.lightGray,
+                .foregroundColor: UIColor.scheme.secondaryLabel,
                 .font: UIFont.systemFont(ofSize: 14)
             ]
             
             let attributes2: [NSAttributedString.Key: Any] = [
-                .foregroundColor: UIColor.black,
+                .foregroundColor: UIColor.scheme.label,
                 .font: UIFont.systemFont(ofSize: 26, weight: .bold)
             ]
             
@@ -46,7 +46,7 @@ class TaskListHeaderView: UICollectionReusableView {
     
     let profileImageShadowView: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor.scheme.surface
         view.layer.cornerRadius = 48 / 2
         view.layer.applyMaterialShadow(elevation: 4)
         return view
@@ -73,7 +73,7 @@ class TaskListHeaderView: UICollectionReusableView {
     }
     
     private func commonInit() {
-        self.backgroundColor = .rgb(red: 242, green: 246, blue: 254)
+        self.backgroundColor = UIColor.scheme.background
         
         addSubview(titleLabel)
         addSubview(profileImageShadowView)

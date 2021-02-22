@@ -21,7 +21,7 @@ class TaskListView: UIView {
     
     let tabBar: CustomTabBar = {
         let view = CustomTabBar()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor.scheme.surface
         view.layer.applyMaterialShadow(elevation: 8)
         view.layer.masksToBounds = false
         return view
@@ -51,7 +51,7 @@ class TaskListView: UIView {
     }
     
     private func commonInit() {
-        self.backgroundColor = .rgb(red: 242, green: 246, blue: 254)
+        self.backgroundColor = UIColor.scheme.background
         
         self.addSubview(collectionView)
         self.addSubview(tabBar)

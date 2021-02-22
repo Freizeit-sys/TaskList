@@ -15,7 +15,7 @@ class ArchiveImageView: UIView {
         let iv = UIImageView()
         let image = UIImage(named: "archive")?.withRenderingMode(.alwaysTemplate)
         iv.image = image
-        iv.tintColor = .rgb(red: 46, green: 88, blue: 226)
+        iv.tintColor = UIColor.scheme.primary
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
         return iv
@@ -32,7 +32,7 @@ class ArchiveImageView: UIView {
     }
     
     private func commonInit() {
-        self.backgroundColor = .white
+        self.backgroundColor = UIColor.scheme.background
         self.layer.applyMaterialShadow(elevation: 2)
         self.layer.cornerRadius = imageViewHeight / 2
         self.layer.masksToBounds = false

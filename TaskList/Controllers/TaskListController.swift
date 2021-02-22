@@ -42,10 +42,17 @@ class TaskListController: UIViewController {
     }
     
     private func setupNavigationBar() {
-        navigationController?.navigationBar.barTintColor = .rgb(red: 242, green: 246, blue: 254)
+        navigationController?.navigationBar.barTintColor = UIColor.scheme.background
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.isTranslucent = false
+    }
+    
+    private func reloadData() {
+        self.v.collectionView.performBatchUpdates({
+            let sections = IndexSet(integer: 0)
+            self.v.collectionView.reloadSections(sections)
+        }, completion: nil)
     }
 }
 
@@ -76,7 +83,7 @@ extension TaskListController: TaskListViewDelegate {
                 self?.headerView.title = newTaskList.title
                 
                 // Reload data.
-                self?.v.collectionView.reloadData()
+                self?.reloadData()
             }
         }
         
@@ -86,7 +93,7 @@ extension TaskListController: TaskListViewDelegate {
             self?.headerView.title = title
             
             // Reload data
-            self?.v.collectionView.reloadData()
+            self?.reloadData()
         }
         
         window?.addSubview(taskListsView)
@@ -96,7 +103,7 @@ extension TaskListController: TaskListViewDelegate {
         let createTaskVC = CreateTaskController()
         createTaskVC.didSaveTask = { [weak self] newTask in
             self?.datasource.appendTask(newTask)
-            self?.v.collectionView.reloadData()
+            self?.reloadData()
         }
         createTaskVC.modalTransitionStyle = .crossDissolve
         createTaskVC.modalPresentationStyle = .overCurrentContext
@@ -106,16 +113,17 @@ extension TaskListController: TaskListViewDelegate {
     func didShowOptions() {
         let window = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first
         let menuView = TaskListMenuView()
+        menuView.isInitialTaskList = self.datasource.isInitialTaskList()
         menuView.taskList = self.datasource.selectedTaskList()
         menuView.frame = self.view.frame
         menuView.setupViews()
         
         menuView.didSortList = { [weak self] soryType in
+            // Sort task list.
             self?.datasource.sortTaskList(soryType)
-            self?.datasource.saveTaskLists()
-            
-            // Reload data
-            self?.v.collectionView.reloadData()
+    
+            // Reload data.
+            self?.reloadData()
         }
         
         menuView.didRenameList = { [weak self] taskList in
@@ -131,7 +139,7 @@ extension TaskListController: TaskListViewDelegate {
                 self?.headerView.title = taskList.title
                 
                 // Reload data.
-                self?.v.collectionView.reloadData()
+                self?.reloadData()
             }
         }
         
@@ -145,7 +153,7 @@ extension TaskListController: TaskListViewDelegate {
             self?.headerView.title = initialTaskList?.title
             
             // Reload data.
-            self?.v.collectionView.reloadData()
+            self?.reloadData()
             
             self?.showUndoSnackbar(selectedTaskList)
         }
@@ -257,6 +265,6 @@ extension TaskListController: UndoSnackBarDelegate {
         self.headerView.title = taskList.title
         
         // Reload data.
-        self.v.collectionView.reloadData()
+        self.reloadData()
     }
 }

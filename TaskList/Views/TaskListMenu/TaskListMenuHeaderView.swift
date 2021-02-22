@@ -12,7 +12,7 @@ class TaskListMenuHeaderView: UICollectionReusableView {
     private let label: UILabel = {
         let label = UILabel()
         label.text = "Sort by"
-        label.textColor = .black
+        label.textColor = UIColor.scheme.label
         label.textAlignment = .left
         label.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
         label.numberOfLines = 1

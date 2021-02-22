@@ -33,6 +33,7 @@ class CreateTaskListView: UIView {
     
     private let inputFormView: TaskListInputFormView = {
         let inputForm = TaskListInputFormView()
+        inputForm.backgroundColor = UIColor.scheme.background
         return inputForm
     }()
     

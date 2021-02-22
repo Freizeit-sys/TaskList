@@ -23,14 +23,14 @@ class TaskListsCell: UICollectionViewCell {
     
     let selectedView: UIView = {
         let view = UIView()
-        view.backgroundColor = .rgb(red: 46, green: 88, blue: 226)
+        view.backgroundColor = UIColor.scheme.primary
         view.alpha = 0.0
         return view
     }()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = UIColor.scheme.label
         label.textAlignment = .left
         label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
         label.numberOfLines = 1
@@ -40,7 +40,7 @@ class TaskListsCell: UICollectionViewCell {
     
     private let countLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .systemGray
+        label.textColor = UIColor.scheme.secondaryLabel
         label.textAlignment = .right
         label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
         label.numberOfLines = 1

@@ -11,7 +11,7 @@ class TaskListMenuFooterView: UICollectionReusableView {
     
     private let separatorView: UIView = {
         let view = UIView()
-        view.backgroundColor = .lightGray
+        view.backgroundColor = UIColor.scheme.line
         return view
     }()
     

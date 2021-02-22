@@ -20,7 +20,7 @@ class TaskInputAccessoryView: UIView {
     let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Create new task"
-        label.textColor = .white
+        label.textColor = UIColor.scheme.label
         label.textAlignment = .left
         label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         label.numberOfLines = 1
@@ -29,6 +29,7 @@ class TaskInputAccessoryView: UIView {
     
     let textField: UITextField = {
         let tf = UITextField()
+        tf.textColor = UIColor.scheme.label
         tf.placeholder = "New task"
         tf.font = UIFont.systemFont(ofSize: 16)
         tf.returnKeyType = .done
@@ -44,7 +45,7 @@ class TaskInputAccessoryView: UIView {
     let saveButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Save", for: .normal)
-        button.setTitleColor(UIColor.darkGray, for: .normal)
+        button.setTitleColor(UIColor.scheme.button, for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         button.isEnabled = false
         button.addTarget(self, action: #selector(handleSave), for: .touchUpInside)
@@ -57,6 +58,18 @@ class TaskInputAccessoryView: UIView {
         return gesture
     }()
     
+//    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+//        if #available(iOS 13.0, *) {
+//            if self.traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+//                if traitCollection.userInterfaceStyle == .dark {
+//                    textField.keyboardAppearance = .dark
+//                } else {
+//                    textField.keyboardAppearance = .light
+//                }
+//            }
+//        }
+//    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -68,7 +81,7 @@ class TaskInputAccessoryView: UIView {
     }
     
     private func commonInit() {
-        backgroundColor = .tertiarySystemBackground
+        backgroundColor = UIColor.scheme.background
         layer.cornerRadius = 10
         layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         duedateButton.duedate = Date()
@@ -175,8 +188,8 @@ class DueDateButton: UIView {
     
     private let dateButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = UIColor.secondarySystemBackground
-        button.setTitleColor(UIColor.white, for: .normal)
+        button.backgroundColor = UIColor.scheme.surface
+        button.setTitleColor(UIColor.scheme.label, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         button.contentEdgeInsets = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
         button.isEnabled = false
@@ -186,8 +199,8 @@ class DueDateButton: UIView {
     
     private let timeButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = UIColor.secondarySystemBackground
-        button.setTitleColor(UIColor.white, for: .normal)
+        button.backgroundColor = UIColor.scheme.surface
+        button.setTitleColor(UIColor.scheme.label, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         button.contentEdgeInsets = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
         button.isEnabled = false

@@ -47,6 +47,7 @@
 		8492CEF025E29E2800115EB6 /* TaskListsFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492CE3425E0D0A300115EB6 /* TaskListsFooterView.swift */; };
 		8492CEF525E2ABFA00115EB6 /* UndoSnackBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492CEF425E2ABFA00115EB6 /* UndoSnackBar.swift */; };
 		8492CF0C25E2BC6A00115EB6 /* TaskListsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492CF0B25E2BC6A00115EB6 /* TaskListsDataSource.swift */; };
+		84C4E3AF25E3790C006F7619 /* UserDefaults+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C4E3AE25E3790C006F7619 /* UserDefaults+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -113,6 +114,7 @@
 		8492CED925E28CC800115EB6 /* CalendarPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPickerView.swift; sourceTree = "<group>"; };
 		8492CEF425E2ABFA00115EB6 /* UndoSnackBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoSnackBar.swift; sourceTree = "<group>"; };
 		8492CF0B25E2BC6A00115EB6 /* TaskListsDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListsDataSource.swift; sourceTree = "<group>"; };
+		84C4E3AE25E3790C006F7619 /* UserDefaults+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -243,6 +245,7 @@
 				84154163256464F300C9D6F3 /* UIColor+Extensions.swift */,
 				844DCB0D25CE990B00666392 /* CALayer+Extensions.swift */,
 				8492CD9325DF7E0000115EB6 /* Date+Extensions.swift */,
+				84C4E3AE25E3790C006F7619 /* UserDefaults+Extensions.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -420,6 +423,7 @@
 				8492CE7D25E1476C00115EB6 /* TaskListInputFormView.swift in Sources */,
 				8492CD8F25DF79A200115EB6 /* ArchiveImageView.swift in Sources */,
 				8492CD9425DF7E0000115EB6 /* Date+Extensions.swift in Sources */,
+				84C4E3AF25E3790C006F7619 /* UserDefaults+Extensions.swift in Sources */,
 				8476211125D13B3E0060EF36 /* ProfileController.swift in Sources */,
 				8476210A25D139640060EF36 /* ProfileHeaderView.swift in Sources */,
 				847620E125D128770060EF36 /* TaskListController.swift in Sources */,

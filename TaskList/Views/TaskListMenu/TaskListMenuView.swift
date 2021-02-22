@@ -11,22 +11,9 @@ enum SortType: Int {
     case myOrder, date
 }
 
-extension UserDefaults {
-    
-    func setSortType(_ type: SortType?, forKey key: String) {
-        set(type?.rawValue, forKey: key)
-    }
-    
-    func getSortType(forKey key: String) -> SortType? {
-        if let rawValue = object(forKey: key) as? Int {
-            return SortType(rawValue: rawValue)
-        }
-        return nil
-    }
-}
-
 class TaskListMenuView: UIView {
     
+    var isInitialTaskList: Bool?
     var taskList: TaskList?
     
     var didSortList: ((SortType) -> ())?
@@ -57,7 +44,7 @@ class TaskListMenuView: UIView {
     
     private let collectionView: UICollectionView = {
         let cv = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-        cv.backgroundColor = .white
+        cv.backgroundColor = UIColor.scheme.background
         cv.showsVerticalScrollIndicator = false
         cv.isScrollEnabled = false
         cv.layer.cornerRadius = 10
@@ -221,6 +208,15 @@ extension TaskListMenuView: UICollectionViewDelegate, UICollectionViewDataSource
             cell.toggleRadioButton()
         }
         
+        guard let _isInitialTaskList = self.isInitialTaskList else { return cell }
+        if section == 1 && _isInitialTaskList {
+            cell.textLabel.textColor = UIColor.scheme.secondaryLabel
+            cell.isUserInteractionEnabled = false
+        } else {
+            cell.textLabel.textColor = UIColor.scheme.label
+            cell.isUserInteractionEnabled = true
+        }
+        
         return cell
     }
     
@@ -273,6 +269,7 @@ extension TaskListMenuView: UICollectionViewDelegate, UICollectionViewDataSource
             self.sortType = index == 0 ? .myOrder : .date
             self.didSortList?(self.sortType)
             self.saveSortType()
+            self.dismiss { return }
         case 1: ()
             if index == 0 {
                 // Rename the list
@@ -281,8 +278,6 @@ extension TaskListMenuView: UICollectionViewDelegate, UICollectionViewDataSource
             } else {
                 // Delete the list
                 guard let _taskList = self.taskList else { return }
-                self.didDeleteList?(_taskList)
-                
                 self.dismiss { self.didDeleteList?(_taskList) }
             }
         default:

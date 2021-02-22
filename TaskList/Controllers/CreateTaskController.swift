@@ -11,6 +11,12 @@ class CreateTaskController: UIViewController {
     
     public var didSaveTask: ((Task) -> ())?
     
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        // Did change keyboard and input form view backgournd color.
+        containerView.textField.resignFirstResponder()
+        containerView.textField.becomeFirstResponder()
+    }
+    
     override var canBecomeFirstResponder: Bool {
         return true
     }
@@ -23,6 +29,7 @@ class CreateTaskController: UIViewController {
         // height = contents height
         let frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 168) // 168
         let view = TaskInputAccessoryView(frame: frame)
+        view.backgroundColor = UIColor.scheme.background
         return view
     }()
     

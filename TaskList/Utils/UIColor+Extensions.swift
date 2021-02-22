@@ -13,26 +13,52 @@ extension UIColor {
         return UIColor(red: red / 255, green: green / 255, blue: blue / 255, alpha: alpha)
     }
     
+    static let blueGray = UIColor.rgb(red: 242, green: 246, blue: 254)
+    static let chacoalBlack = UIColor.rgb(red: 31, green: 33, blue: 39)
+    static let noirBlack = UIColor.rgb(red: 42, green: 46, blue: 59)
+    static let mainBlue = UIColor.rgb(red: 46, green: 88, blue: 226)
+    static let mainNavy = UIColor.rgb(red: 115, green: 76, blue: 246)
+    
     struct scheme {
+        public static let primary = UIColor.primary
         public static let background = UIColor.background
         public static let surface = UIColor.surface
         public static let label = UIColor.label
         public static let secondaryLabel = UIColor.secondaryLabel
+        public static let icon = UIColor.icon
         public static let button = UIColor.button
+        public static let control = UIColor.control
+        public static let line = UIColor.line
         public static let ink = UIColor.ink
         public static let error = UIColor.error
     }
     
-    static private var background: UIColor {
-        guard #available(iOS 13.0, *) else {
-            return rgb(red: 242, green: 242, blue: 247, alpha: 1.0)
+    static private var primary: UIColor {
+        guard #available(iOS 13.0, *) else  {
+            return mainBlue
         }
         
         let color = UIColor { (traitCollection) -> UIColor in
             if traitCollection.userInterfaceStyle == .dark {
-                return tertiarySystemBackground
+                return mainNavy
             } else {
-                return secondarySystemBackground
+                return mainBlue
+            }
+        }
+        
+        return color
+    }
+    
+    static private var background: UIColor {
+        guard #available(iOS 13.0, *) else  {
+            return blueGray
+        }
+        
+        let color = UIColor { (traitCollection) -> UIColor in
+            if traitCollection.userInterfaceStyle == .dark {
+                return chacoalBlack
+            } else {
+                return blueGray
             }
         }
         
@@ -46,9 +72,9 @@ extension UIColor {
         
         let color = UIColor { (traitCollction) -> UIColor in
             if traitCollction.userInterfaceStyle == .dark {
-                return .secondarySystemBackground
+                return .noirBlack
             } else {
-                return .systemBackground
+                return .white
             }
         }
         
@@ -87,6 +113,22 @@ extension UIColor {
         return color
     }
     
+    static private var icon: UIColor {
+        guard #available(iOS 13.0, *) else {
+            return .darkGray
+        }
+        
+        let color = UIColor { (traitCollction) -> UIColor in
+            if traitCollction.userInterfaceStyle == .dark {
+                return .lightGray
+            } else {
+                return .darkGray
+            }
+        }
+        
+        return color
+    }
+    
     static private var button: UIColor {
         guard #available(iOS 13.0, *) else {
             return .darkGray
@@ -97,6 +139,38 @@ extension UIColor {
                 return .lightGray
             } else {
                 return .darkGray
+            }
+        }
+        
+        return color
+    }
+    
+    static private var control: UIColor {
+        guard #available(iOS 13.0, *) else {
+            return .rgb(red: 145, green: 251, blue: 175)
+        }
+        
+        let color = UIColor { (traitCollction) -> UIColor in
+            if traitCollction.userInterfaceStyle == .dark {
+                return .rgb(red: 145, green: 251, blue: 175)
+            } else {
+                return .rgb(red: 145, green: 251, blue: 175)
+            }
+        }
+        
+        return color
+    }
+    
+    static private var line: UIColor {
+        guard #available(iOS 13.0, *) else {
+            return .rgb(red: 229, green: 229, blue: 234)
+        }
+        
+        let color = UIColor { (traitCollction) -> UIColor in
+            if traitCollction.userInterfaceStyle == .dark {
+                return .rgb(red: 64, green: 64, blue: 64)
+            } else {
+                return .rgb(red: 229, green: 229, blue: 234)
             }
         }
         

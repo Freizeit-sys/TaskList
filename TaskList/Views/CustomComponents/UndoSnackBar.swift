@@ -24,7 +24,7 @@ class UndoSnackBar: UIView {
     
     private  let textLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = UIColor.scheme.label
         label.textAlignment = .left
         label.font = UIFont.systemFont(ofSize: 14)
         return label
@@ -33,7 +33,7 @@ class UndoSnackBar: UIView {
     private let undoButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Undo", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(UIColor.scheme.button, for: .normal)
         button.titleLabel?.textAlignment = .right
         button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
         button.addTarget(self, action: #selector(handleUndo), for: .touchUpInside)
@@ -51,7 +51,7 @@ class UndoSnackBar: UIView {
     }
     
     private func commonInit() {
-        backgroundColor = .white
+        backgroundColor = UIColor.scheme.surface
         layer.cornerRadius = 8
         layer.applyMaterialShadow(elevation: 4)
         layer.masksToBounds = false

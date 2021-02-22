@@ -17,7 +17,7 @@ class TaskListsFooterView: UICollectionReusableView {
     
     private let separator: UIView = {
         let view = UIView()
-        view.backgroundColor = .rgb(red: 229, green: 229, blue: 232)
+        view.backgroundColor = UIColor.scheme.line
         return view
     }()
     
@@ -25,7 +25,7 @@ class TaskListsFooterView: UICollectionReusableView {
         let iv = UIImageView()
         let image = UIImage(named: "add")?.withRenderingMode(.alwaysTemplate)
         iv.image = image
-        iv.tintColor = .systemGray
+        iv.tintColor = UIColor.scheme.icon
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
         return iv
@@ -34,7 +34,7 @@ class TaskListsFooterView: UICollectionReusableView {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Create new list"
-        label.textColor = .black
+        label.textColor = UIColor.scheme.label
         label.textAlignment = .left
         label.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
         label.numberOfLines = 1
@@ -98,7 +98,9 @@ class TaskListsFooterView: UICollectionReusableView {
     @objc private func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
         switch gesture.state {
         case .began:
-            UIView.animate(withDuration: 0.15) { self.backgroundColor = .rgb(red: 229, green: 229, blue: 232) }
+            UIView.animate(withDuration: 0.15) {
+                self.backgroundColor = UIColor.scheme.ink//.rgb(red: 229, green: 229, blue: 232)
+            }
         case .ended:
             UIView.animate(withDuration: 0.15) {
                 self.backgroundColor = .clear

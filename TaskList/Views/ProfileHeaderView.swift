@@ -17,7 +17,7 @@ class ProfileHeaderView: UICollectionReusableView {
     
     let profileImageShadowView: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor.scheme.surface
         view.layer.cornerRadius = 44 / 2
         view.layer.applyMaterialShadow(elevation: 4)
         view.layer.masksToBounds = false
@@ -37,7 +37,7 @@ class ProfileHeaderView: UICollectionReusableView {
     let usernameLabel: UILabel = {
         let label = UILabel()
         label.text = "Username"
-        label.textColor = .black
+        label.textColor = UIColor.scheme.label
         label.textAlignment = .left
         label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
         label.lineBreakMode = .byWordWrapping
@@ -48,7 +48,7 @@ class ProfileHeaderView: UICollectionReusableView {
     let emailLabel: UILabel = {
         let label = UILabel()
         label.text = "example123@gmail.com"
-        label.textColor = .lightGray
+        label.textColor = UIColor.scheme.secondaryLabel
         label.textAlignment = .left
         label.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
         label.lineBreakMode = .byWordWrapping
@@ -60,14 +60,14 @@ class ProfileHeaderView: UICollectionReusableView {
         let button = UIButton(type: .system)
         let image = UIImage(named: "back")?.withRenderingMode(.alwaysTemplate)
         button.setImage(image, for: .normal)
-        button.tintColor = .black
+        button.tintColor = UIColor.scheme.button
         button.addTarget(self, action: #selector(handleBack), for: .touchUpInside)
         return button
     }()
     
     let separator: UIView = {
         let view = UIView()
-        view.backgroundColor = .rgb(red: 229, green: 229, blue: 234)
+        view.backgroundColor = UIColor.scheme.line
         return view
     }()
     

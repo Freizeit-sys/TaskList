@@ -31,12 +31,12 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
             
             let attributed1: [NSAttributedString.Key: Any] = [
                 .paragraphStyle: paragraphStyle,
-                .foregroundColor: UIColor.black,
+                .foregroundColor: UIColor.scheme.label,
                 .font: UIFont.systemFont(ofSize: 16, weight: .semibold)
             ]
             
             let attributed2: [NSAttributedString.Key: Any] = [
-                .foregroundColor: UIColor.systemGray,
+                .foregroundColor: UIColor.scheme.secondaryLabel,
                 .font: UIFont.systemFont(ofSize: 13, weight: .regular)
             ]
             
@@ -45,26 +45,27 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
             titleLabel.attributedText = attributedText
             
             let isCompleted = _task.completed
-            let imageName = isCompleted ? "check" : "uncheck"
+            let imageName = isCompleted ? "checked" : "unchecked"
             let image = UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate)
             completeButton.setImage(image, for: .normal)
-            completeButton.tintColor = isCompleted ? .rgb(red: 46, green: 88, blue: 226) : .systemGray
+            completeButton.tintColor = isCompleted ? UIColor.scheme.control : .systemGray
         }
     }
     
     private let cellContents: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor.scheme.surface
         view.alpha = 1.0
-        view.layer.cornerRadius = 25
+        view.layer.cornerRadius = 20
+        view.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMinYCorner, .layerMaxXMaxYCorner]
         view.layer.applyMaterialShadow(elevation: 4)
         return view
     }()
     
     lazy var completeButton: UIButton = {
         let button = UIButton(type: .system)
-        button.tintColor = .systemGray
-        let image = UIImage(named: "uncheck")?.withRenderingMode(.alwaysTemplate)
+        button.tintColor = UIColor.scheme.button
+        let image = UIImage(named: "unchecked")?.withRenderingMode(.alwaysTemplate)
         button.setImage(image, for: .normal)
         button.contentHorizontalAlignment = .fill
         button.contentVerticalAlignment = .fill
@@ -76,7 +77,7 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     
     let titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = UIColor.scheme.label
         label.textAlignment = .left
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         label.numberOfLines = 3
@@ -88,6 +89,7 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     
     let archiveImageView: UIView = {
         let view = ArchiveImageView()
+        view.backgroundColor = UIColor.scheme.surface
         view.alpha = 1.0
         return view
     }()
@@ -188,12 +190,12 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     }
     
     private func changeCheckButtonImage(_ isCompleted: Bool, completion: @escaping() -> ()) {
-        let imageName = isCompleted ? "check" : "uncheck"
+        let imageName = isCompleted ? "checked" : "unchecked"
         let image = UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate)
         
         UIView.transition(with: completeButton.imageView!, duration: 0.4, options: .transitionCrossDissolve) {
             self.completeButton.setImage(image, for: .normal)
-            self.completeButton.tintColor = isCompleted ? .rgb(red: 46, green: 88, blue: 226) : .systemGray
+            self.completeButton.tintColor = isCompleted ? UIColor.scheme.control : .systemGray
         } completion: { (finished) in
             self.delegate?.didCheck(complete: isCompleted)
             completion()
