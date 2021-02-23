@@ -15,7 +15,7 @@ class ArchiveImageView: UIView {
         let iv = UIImageView()
         let image = UIImage(named: "archive")?.withRenderingMode(.alwaysTemplate)
         iv.image = image
-        iv.tintColor = UIColor.scheme.primary
+        iv.tintColor = UIColor.scheme.remove
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
         return iv

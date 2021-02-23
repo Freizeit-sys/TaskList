@@ -169,12 +169,41 @@ class TaskListsDataSource {
     }
     
     func appendTask(_ task: Task) {
-        self.taskLists[selectedIndex].tasks.append(task)
+        self.taskLists[selectedIndex].tasks.insert(task, at: 0)
         self.saveTaskLists()
     }
     
     func removeTask(at index: Int) {
         self.taskLists[selectedIndex].tasks.remove(at: index)
         self.saveTaskLists()
+    }
+    
+    func completeTask(at index: Int) {
+        // Complete task
+        self.taskLists[selectedIndex].tasks[index].completed = true
+        
+        let fromIndex = index
+        let toIndex = self.countTask()
+        self.moveTask(fromIndex: fromIndex, toIndex: toIndex, completed: true)
+    }
+    
+    func uncompleteTask(at index: Int) {
+        // Uncomplete task
+        self.taskLists[selectedIndex].tasks[index].completed = false
+        
+        let fromIndex = index
+        let toIndex = 0
+        self.moveTask(fromIndex: fromIndex, toIndex: toIndex, completed: false)
+    }
+    
+    func moveTask(fromIndex: Int, toIndex: Int, completed: Bool) {
+        guard let fromTask = self.task(at: fromIndex) else { return }
+        if completed {
+            self.taskLists[selectedIndex].tasks.remove(at: fromIndex)
+            self.taskLists[selectedIndex].tasks.append(fromTask)
+        } else {
+            self.taskLists[selectedIndex].tasks.remove(at: fromIndex)
+            self.taskLists[selectedIndex].tasks.insert(fromTask, at: toIndex)
+        }
     }
 }

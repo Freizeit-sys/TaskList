@@ -48,6 +48,26 @@ class TaskListController: UIViewController {
         navigationController?.navigationBar.isTranslucent = false
     }
     
+    private func completeTask(at index: Int) {
+        let fromIndexPath = IndexPath(item: index, section: 0)
+        let toIndexPath = IndexPath(item: self.datasource.countTask() - 1, section: 0)
+        
+        self.v.collectionView.performBatchUpdates({
+            self.datasource.completeTask(at: index)
+            self.v.collectionView.moveItem(at: fromIndexPath, to: toIndexPath)
+        }, completion: nil)
+    }
+    
+    private func uncompleteTask(at index: Int) {
+        let fromIndexPath = IndexPath(item: index, section: 0)
+        let toIndexPath = IndexPath(item: 0, section: 0)
+        
+        self.v.collectionView.performBatchUpdates({
+            self.datasource.uncompleteTask(at: index)
+            self.v.collectionView.moveItem(at: fromIndexPath, to: toIndexPath)
+        }, completion: nil)
+    }
+    
     private func reloadData() {
         self.v.collectionView.performBatchUpdates({
             let sections = IndexSet(integer: 0)
@@ -230,17 +250,42 @@ extension TaskListController: UICollectionViewDelegateFlowLayout, UICollectionVi
 extension TaskListController: TaskListHeaderViewDelegate {
     
     func didShowProfile() {
-        let profileVC = ProfileController()
-        profileVC.modalTransitionStyle = .crossDissolve
-        profileVC.modalPresentationStyle = .overCurrentContext
-        present(profileVC, animated: true, completion: nil)
+//        let profileVC = ProfileController()
+//        profileVC.modalTransitionStyle = .crossDissolve
+//        profileVC.modalPresentationStyle = .overCurrentContext
+//        present(profileVC, animated: true, completion: nil)
+        
+        let window = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first
+        
+        let profileView = ProfileView()
+        profileView.frame = self.view.frame
+        
+        // Show Settings View Controller
+        profileView.didSettings = { [weak self] in
+            self?.showSettingsVC()
+        }
+        
+        window?.addSubview(profileView)
+    }
+    
+    private func showSettingsVC() {
+        let settingsVC = SettingsController()
+        present(settingsVC, animated: true, completion: nil)
     }
 }
 
 extension TaskListController: TaskCellDelegate {
     
-    func didCheck(complete: Bool) {
-        // change datasource
+    func didComplete(_ cell: TaskCell) {
+        guard let indexPath = self.v.collectionView.indexPath(for: cell), let completed = cell.task?.completed else { return }
+        
+        if completed {
+            self.completeTask(at: indexPath.item)
+        } else {
+            self.uncompleteTask(at: indexPath.item)
+        }
+        
+        self.datasource.saveTaskLists()
     }
     
     func didDeleteCell(_ cell: TaskCell) {

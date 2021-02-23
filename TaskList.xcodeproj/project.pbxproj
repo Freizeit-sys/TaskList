@@ -25,7 +25,6 @@
 		847620CA25D0F6360060EF36 /* TaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847620C925D0F6360060EF36 /* TaskCell.swift */; };
 		847620E125D128770060EF36 /* TaskListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8415416D256466BD00C9D6F3 /* TaskListController.swift */; };
 		8476210A25D139640060EF36 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847620F125D132C90060EF36 /* ProfileHeaderView.swift */; };
-		8476211125D13B3E0060EF36 /* ProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846D2F5B25D033AB00D9C63D /* ProfileController.swift */; };
 		8476211525D13B430060EF36 /* ProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847620FC25D139150060EF36 /* ProfileCell.swift */; };
 		8476212625D21A770060EF36 /* CustomCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8476212525D21A770060EF36 /* CustomCollectionViewFlowLayout.swift */; };
 		8492CD7925DF6E6100115EB6 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492CD7825DF6E6100115EB6 /* Task.swift */; };
@@ -88,7 +87,6 @@
 		844DCB0D25CE990B00666392 /* CALayer+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer+Extensions.swift"; sourceTree = "<group>"; };
 		846D2F3225CEF7C800D9C63D /* CustomTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
 		846D2F5625D032FF00D9C63D /* SettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
-		846D2F5B25D033AB00D9C63D /* ProfileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileController.swift; sourceTree = "<group>"; };
 		846D2F6025D0344300D9C63D /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		8476206F25D09CCF0060EF36 /* TaskListHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListHeaderView.swift; sourceTree = "<group>"; };
 		847620C925D0F6360060EF36 /* TaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCell.swift; sourceTree = "<group>"; };
@@ -202,7 +200,6 @@
 			children = (
 				8415416D256466BD00C9D6F3 /* TaskListController.swift */,
 				8492CD9825DF852200115EB6 /* CreateTaskController.swift */,
-				846D2F5B25D033AB00D9C63D /* ProfileController.swift */,
 				846D2F5625D032FF00D9C63D /* SettingsController.swift */,
 			);
 			path = Controllers;
@@ -424,7 +421,6 @@
 				8492CD8F25DF79A200115EB6 /* ArchiveImageView.swift in Sources */,
 				8492CD9425DF7E0000115EB6 /* Date+Extensions.swift in Sources */,
 				84C4E3AF25E3790C006F7619 /* UserDefaults+Extensions.swift in Sources */,
-				8476211125D13B3E0060EF36 /* ProfileController.swift in Sources */,
 				8476210A25D139640060EF36 /* ProfileHeaderView.swift in Sources */,
 				847620E125D128770060EF36 /* TaskListController.swift in Sources */,
 				846D2F7625D034C800D9C63D /* ProfileView.swift in Sources */,

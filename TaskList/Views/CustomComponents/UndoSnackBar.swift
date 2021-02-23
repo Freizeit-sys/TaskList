@@ -67,10 +67,10 @@ class UndoSnackBar: UIView {
         
         self.alpha = 0.0
         
-        UIView.animate(withDuration: 0.5, delay: 0.5, usingSpringWithDamping: 1.0, initialSpringVelocity: 1.0, options: .curveEaseInOut) {
+        UIView.animate(withDuration: 0.5, delay: 0.8, usingSpringWithDamping: 1.0, initialSpringVelocity: 1.0, options: .curveEaseInOut) {
             self.alpha = 1.0
         } completion: { (finished) in
-            self.animateRemoveFromSuperview(delay: 1.0)
+            self.animateRemoveFromSuperview(delay: 4.0)
         }
     }
     

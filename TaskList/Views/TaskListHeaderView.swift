@@ -18,6 +18,7 @@ class TaskListHeaderView: UICollectionReusableView {
     var title: String? {
         didSet {
             guard let title = self.title else { return }
+            let date = Date().string(format: "yyyy.MM.dd")
             
             let attributes1: [NSAttributedString.Key: Any] = [
                 .foregroundColor: UIColor.scheme.secondaryLabel,
@@ -29,7 +30,7 @@ class TaskListHeaderView: UICollectionReusableView {
                 .font: UIFont.systemFont(ofSize: 26, weight: .bold)
             ]
             
-            let attributedText = NSMutableAttributedString(string: "14.05.2020 \n", attributes: attributes1)
+            let attributedText = NSMutableAttributedString(string: "\(date)\n", attributes: attributes1)
             attributedText.append(NSAttributedString(string: title, attributes: attributes2))
             
             titleLabel.attributedText = attributedText

@@ -8,7 +8,7 @@
 import UIKit
 
 protocol TaskCellDelegate: class {
-    func didCheck(complete: Bool)
+    func didComplete(_ cell: TaskCell)
     func didDeleteCell(_ cell: TaskCell)
 }
 
@@ -64,7 +64,7 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     
     lazy var completeButton: UIButton = {
         let button = UIButton(type: .system)
-        button.tintColor = UIColor.scheme.button
+        button.tintColor = UIColor.scheme.control
         let image = UIImage(named: "unchecked")?.withRenderingMode(.alwaysTemplate)
         button.setImage(image, for: .normal)
         button.contentHorizontalAlignment = .fill
@@ -122,20 +122,20 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-
+        
         let point: CGPoint = panGesture.translation(in: self)
         let width = self.cellContents.frame.width
         let height  = self.cellContents.frame.height
-
+        
         if panGesture.state == .changed {
             // Move cellContents
             if point.x < 0 {
                 self.cellContents.frame = CGRect(x: point.x, y: 0, width: width, height: height)
             }
-
+            
             // Feedback or animation archive image
             if point.x < -60 && !isFeedback {
-
+                
                 UIView.animate(withDuration: 0.2) {
                     self.archiveImageView.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
                 } completion: { (finished) in
@@ -143,7 +143,7 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
                         self.archiveImageView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
                     }
                 }
-
+                
                 if let generator = feedbackGenerator as? UIImpactFeedbackGenerator {
                     generator.impactOccurred()
                     isFeedback = true
@@ -190,15 +190,17 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     }
     
     private func changeCheckButtonImage(_ isCompleted: Bool, completion: @escaping() -> ()) {
-        let imageName = isCompleted ? "checked" : "unchecked"
-        let image = UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate)
-        
-        UIView.transition(with: completeButton.imageView!, duration: 0.4, options: .transitionCrossDissolve) {
-            self.completeButton.setImage(image, for: .normal)
-            self.completeButton.tintColor = isCompleted ? UIColor.scheme.control : .systemGray
+        UIView.animate(withDuration: 0.3) {
+            self.completeButton.alpha = 0.0
         } completion: { (finished) in
-            self.delegate?.didCheck(complete: isCompleted)
-            completion()
+            // Change image and image color
+            self.task?.completed.toggle()
+            
+            UIView.animate(withDuration: 0.3) {
+                self.completeButton.alpha = 1.0
+            } completion: { (finished) in
+                completion()
+            }
         }
     }
     
@@ -210,25 +212,25 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
         }
     }
     
-    @objc private func handleComplete() {
-        self.task?.completed.toggle()
-        
-        guard let isCompleted = self.task?.completed else { return print("Did not find task.") }
-        self.changeCheckButtonImage(isCompleted, completion: {
+    @objc
+    private func handleComplete() {
+        completeButton.isUserInteractionEnabled = false
+        guard let isCompleted = self.task?.completed else { return print("Failed to find task.") }
+        self.changeCheckButtonImage(isCompleted) {
+            self.completeButton.isUserInteractionEnabled = true
             self.archiveImageView.alpha = 0.0
-            self.animateDeleteCell()
-        })
+            self.delegate?.didComplete(self)
+        }
     }
     
-    @objc func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
+    @objc
+    private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
         switch gesture.state {
         case .began:
             ()
         case .changed:
             self.setNeedsLayout()
-            //changed()
         case .ended:
-            //ended()
             let point = gesture.translation(in: self)
             if point.x < -65 {
                 // Delete cell
@@ -265,7 +267,7 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     // MARK: - UIGestureRecognizerDelegate
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
+        return false
     }
     
     override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {

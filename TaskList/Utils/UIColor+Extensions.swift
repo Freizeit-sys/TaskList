@@ -18,6 +18,7 @@ extension UIColor {
     static let noirBlack = UIColor.rgb(red: 42, green: 46, blue: 59)
     static let mainBlue = UIColor.rgb(red: 46, green: 88, blue: 226)
     static let mainNavy = UIColor.rgb(red: 115, green: 76, blue: 246)
+    static let removeRed = UIColor.rgb(red: 239, green: 83, blue: 80)
     
     struct scheme {
         public static let primary = UIColor.primary
@@ -25,6 +26,7 @@ extension UIColor {
         public static let surface = UIColor.surface
         public static let label = UIColor.label
         public static let secondaryLabel = UIColor.secondaryLabel
+        public static let remove = UIColor.remove
         public static let icon = UIColor.icon
         public static let button = UIColor.button
         public static let control = UIColor.control
@@ -107,6 +109,22 @@ extension UIColor {
                 return .lightGray
             } else {
                 return .darkGray
+            }
+        }
+        
+        return color
+    }
+    
+    static private var remove: UIColor {
+        guard #available(iOS 13.0, *) else {
+            return .removeRed
+        }
+        
+        let color = UIColor { (traitCollction) -> UIColor in
+            if traitCollction.userInterfaceStyle == .dark {
+                return .removeRed
+            } else {
+                return .removeRed
             }
         }
         
