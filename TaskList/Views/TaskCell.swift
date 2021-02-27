@@ -24,7 +24,7 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
             titleLabel.text = _task.title
             
             let title = _task.title
-            let duedate = _task.duedate.string()
+            let duedate = _task.duedate.string(format: "yyyy-MM-dd HH:mm")
             
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineSpacing = 4.0
@@ -48,7 +48,7 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
             let imageName = isCompleted ? "checked" : "unchecked"
             let image = UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate)
             completeButton.setImage(image, for: .normal)
-            completeButton.tintColor = isCompleted ? UIColor.scheme.control : .systemGray
+            completeButton.tintColor = isCompleted ? UIColor.scheme.check : .systemGray
         }
     }
     
@@ -64,7 +64,7 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     
     lazy var completeButton: UIButton = {
         let button = UIButton(type: .system)
-        button.tintColor = UIColor.scheme.control
+        button.tintColor = UIColor.scheme.check
         let image = UIImage(named: "unchecked")?.withRenderingMode(.alwaysTemplate)
         button.setImage(image, for: .normal)
         button.contentHorizontalAlignment = .fill
@@ -84,8 +84,6 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
         label.lineBreakMode = .byWordWrapping
         return label
     }()
-    
-    //let duedate:
     
     let archiveImageView: UIView = {
         let view = ArchiveImageView()
@@ -218,7 +216,6 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
         guard let isCompleted = self.task?.completed else { return print("Failed to find task.") }
         self.changeCheckButtonImage(isCompleted) {
             self.completeButton.isUserInteractionEnabled = true
-            self.archiveImageView.alpha = 0.0
             self.delegate?.didComplete(self)
         }
     }

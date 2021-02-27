@@ -10,7 +10,7 @@ import UIKit
 protocol TaskInputAccessoryViewDelegate: class {
     func didBack()
     func didSave(_ task: Task)
-    func didSelectDueDate()
+    func didShowDateTimePicker()
 }
 
 class TaskInputAccessoryView: UIView {
@@ -58,18 +58,6 @@ class TaskInputAccessoryView: UIView {
         return gesture
     }()
     
-//    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-//        if #available(iOS 13.0, *) {
-//            if self.traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
-//                if traitCollection.userInterfaceStyle == .dark {
-//                    textField.keyboardAppearance = .dark
-//                } else {
-//                    textField.keyboardAppearance = .light
-//                }
-//            }
-//        }
-//    }
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -104,7 +92,11 @@ class TaskInputAccessoryView: UIView {
         duedateButton.addGestureRecognizer(tapGesture)
     }
     
-    func clearCommentTextField() {
+    public func setSelectedDate(_ date: Date) {
+        duedateButton.duedate = date
+    }
+    
+    public func clearCommentTextField() {
         textField.text = nil
     }
     
@@ -133,7 +125,7 @@ class TaskInputAccessoryView: UIView {
     
     @objc
     private func handleTapGesture(_ recognizer: UITapGestureRecognizer) {
-        self.delegate?.didSelectDueDate()
+        self.delegate?.didShowDateTimePicker()
     }
     
     @objc
@@ -194,6 +186,8 @@ class DueDateButton: UIView {
         button.contentEdgeInsets = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
         button.isEnabled = false
         button.layer.cornerRadius = 4
+        button.layer.applyMaterialShadow(elevation: 2)
+        button.layer.masksToBounds = false
         return button
     }()
     
@@ -205,6 +199,8 @@ class DueDateButton: UIView {
         button.contentEdgeInsets = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
         button.isEnabled = false
         button.layer.cornerRadius = 4
+        button.layer.applyMaterialShadow(elevation: 2)
+        button.layer.masksToBounds = false
         return button
     }()
     

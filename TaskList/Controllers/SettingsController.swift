@@ -90,7 +90,7 @@ class SettingsCell: UICollectionViewCell {
                 self.accessoryView.key = text
                 self.accessoryView.accessoryType = .switch
             case .disclosure:
-                let image = (UIImage(named: "disclosure")?.withRenderingMode(.alwaysTemplate))!
+                let image = (UIImage(named: "chevron_right")?.withRenderingMode(.alwaysTemplate))!
                 self.accessoryView.setImage(image)
                 self.accessoryView.accessoryType = .disclosure
             case .none:

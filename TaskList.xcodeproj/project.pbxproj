@@ -41,12 +41,21 @@
 		8492CEC225E26D2300115EB6 /* TaskListMenuFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492CEC125E26D2300115EB6 /* TaskListMenuFooterView.swift */; };
 		8492CEC725E26D3D00115EB6 /* TaskListMenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492CEC625E26D3D00115EB6 /* TaskListMenuCell.swift */; };
 		8492CEE125E28F8000115EB6 /* TaskInputAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492CDA925DFCAC100115EB6 /* TaskInputAccessoryView.swift */; };
-		8492CEE225E28F8000115EB6 /* CalendarPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492CED925E28CC800115EB6 /* CalendarPickerView.swift */; };
 		8492CEE325E28F8000115EB6 /* CreateTaskController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492CD9825DF852200115EB6 /* CreateTaskController.swift */; };
 		8492CEF025E29E2800115EB6 /* TaskListsFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492CE3425E0D0A300115EB6 /* TaskListsFooterView.swift */; };
 		8492CEF525E2ABFA00115EB6 /* UndoSnackBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492CEF425E2ABFA00115EB6 /* UndoSnackBar.swift */; };
 		8492CF0C25E2BC6A00115EB6 /* TaskListsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492CF0B25E2BC6A00115EB6 /* TaskListsDataSource.swift */; };
 		84C4E3AF25E3790C006F7619 /* UserDefaults+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C4E3AE25E3790C006F7619 /* UserDefaults+Extensions.swift */; };
+		84F7EB6925EA4DCA004FFB48 /* DateTimePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7EB6825EA4DCA004FFB48 /* DateTimePickerView.swift */; };
+		84F7EB6E25EA4FC7004FFB48 /* DateTimePickerHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7EB6D25EA4FC7004FFB48 /* DateTimePickerHeaderView.swift */; };
+		84F7EB7625EA4FE6004FFB48 /* DatePickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7EB7525EA4FE6004FFB48 /* DatePickerCell.swift */; };
+		84F7EB7E25EA5000004FFB48 /* TimePickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7EB7D25EA5000004FFB48 /* TimePickerCell.swift */; };
+		84F7EB8325EA5025004FFB48 /* SelectDateTimeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7EB8225EA5025004FFB48 /* SelectDateTimeCell.swift */; };
+		84F7EB8825EA504D004FFB48 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7EB8725EA504D004FFB48 /* CalendarView.swift */; };
+		84F7EB9025EA5066004FFB48 /* CalendarCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7EB8F25EA5066004FFB48 /* CalendarCollectionView.swift */; };
+		84F7EB9525EA507E004FFB48 /* CalendarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7EB9425EA507E004FFB48 /* CalendarManager.swift */; };
+		84F7EB9A25EA5098004FFB48 /* CalendarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7EB9925EA5098004FFB48 /* CalendarCell.swift */; };
+		84F7EBA225EA50AA004FFB48 /* CalendarHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7EBA125EA50AA004FFB48 /* CalendarHeaderView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,10 +118,19 @@
 		8492CEBC25E26D0600115EB6 /* TaskListMenuHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListMenuHeaderView.swift; sourceTree = "<group>"; };
 		8492CEC125E26D2300115EB6 /* TaskListMenuFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListMenuFooterView.swift; sourceTree = "<group>"; };
 		8492CEC625E26D3D00115EB6 /* TaskListMenuCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListMenuCell.swift; sourceTree = "<group>"; };
-		8492CED925E28CC800115EB6 /* CalendarPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPickerView.swift; sourceTree = "<group>"; };
 		8492CEF425E2ABFA00115EB6 /* UndoSnackBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoSnackBar.swift; sourceTree = "<group>"; };
 		8492CF0B25E2BC6A00115EB6 /* TaskListsDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListsDataSource.swift; sourceTree = "<group>"; };
 		84C4E3AE25E3790C006F7619 /* UserDefaults+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Extensions.swift"; sourceTree = "<group>"; };
+		84F7EB6825EA4DCA004FFB48 /* DateTimePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateTimePickerView.swift; sourceTree = "<group>"; };
+		84F7EB6D25EA4FC7004FFB48 /* DateTimePickerHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateTimePickerHeaderView.swift; sourceTree = "<group>"; };
+		84F7EB7525EA4FE6004FFB48 /* DatePickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerCell.swift; sourceTree = "<group>"; };
+		84F7EB7D25EA5000004FFB48 /* TimePickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimePickerCell.swift; sourceTree = "<group>"; };
+		84F7EB8225EA5025004FFB48 /* SelectDateTimeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectDateTimeCell.swift; sourceTree = "<group>"; };
+		84F7EB8725EA504D004FFB48 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		84F7EB8F25EA5066004FFB48 /* CalendarCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarCollectionView.swift; sourceTree = "<group>"; };
+		84F7EB9425EA507E004FFB48 /* CalendarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarManager.swift; sourceTree = "<group>"; };
+		84F7EB9925EA5098004FFB48 /* CalendarCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarCell.swift; sourceTree = "<group>"; };
+		84F7EBA125EA50AA004FFB48 /* CalendarHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -208,6 +226,7 @@
 		8415415D2564639900C9D6F3 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				84C4E42B25E635DD006F7619 /* DateAndTimePicker */,
 				8492CF1025E3308A00115EB6 /* CustomComponents */,
 				8492CE9425E2146C00115EB6 /* TaskLists */,
 				8492CE9325E2145100115EB6 /* TaskListMenu */,
@@ -220,7 +239,6 @@
 				8492CDAE25DFCBEC00115EB6 /* CreateTaskView.swift */,
 				8492CE7125E12CB800115EB6 /* CreateTaskListView.swift */,
 				8492CE7C25E1476C00115EB6 /* TaskListInputFormView.swift */,
-				8492CED925E28CC800115EB6 /* CalendarPickerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -278,6 +296,39 @@
 				8492CEF425E2ABFA00115EB6 /* UndoSnackBar.swift */,
 			);
 			path = CustomComponents;
+			sourceTree = "<group>";
+		};
+		84C4E42B25E635DD006F7619 /* DateAndTimePicker */ = {
+			isa = PBXGroup;
+			children = (
+				84F7EB6825EA4DCA004FFB48 /* DateTimePickerView.swift */,
+				84F7EB6D25EA4FC7004FFB48 /* DateTimePickerHeaderView.swift */,
+				84F7EB8225EA5025004FFB48 /* SelectDateTimeCell.swift */,
+				84F7EAB825E8B0DE004FFB48 /* DatePicker */,
+				84F7EAB925E8B0ED004FFB48 /* TimePicker */,
+			);
+			path = DateAndTimePicker;
+			sourceTree = "<group>";
+		};
+		84F7EAB825E8B0DE004FFB48 /* DatePicker */ = {
+			isa = PBXGroup;
+			children = (
+				84F7EB9425EA507E004FFB48 /* CalendarManager.swift */,
+				84F7EB7525EA4FE6004FFB48 /* DatePickerCell.swift */,
+				84F7EB8725EA504D004FFB48 /* CalendarView.swift */,
+				84F7EB8F25EA5066004FFB48 /* CalendarCollectionView.swift */,
+				84F7EB9925EA5098004FFB48 /* CalendarCell.swift */,
+				84F7EBA125EA50AA004FFB48 /* CalendarHeaderView.swift */,
+			);
+			path = DatePicker;
+			sourceTree = "<group>";
+		};
+		84F7EAB925E8B0ED004FFB48 /* TimePicker */ = {
+			isa = PBXGroup;
+			children = (
+				84F7EB7D25EA5000004FFB48 /* TimePickerCell.swift */,
+			);
+			path = TimePicker;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -412,14 +463,17 @@
 			files = (
 				8492CEF025E29E2800115EB6 /* TaskListsFooterView.swift in Sources */,
 				8492CEE125E28F8000115EB6 /* TaskInputAccessoryView.swift in Sources */,
-				8492CEE225E28F8000115EB6 /* CalendarPickerView.swift in Sources */,
+				84F7EB7625EA4FE6004FFB48 /* DatePickerCell.swift in Sources */,
+				84F7EB9525EA507E004FFB48 /* CalendarManager.swift in Sources */,
 				8492CEE325E28F8000115EB6 /* CreateTaskController.swift in Sources */,
+				84F7EBA225EA50AA004FFB48 /* CalendarHeaderView.swift in Sources */,
 				8492CEA925E2355A00115EB6 /* TaskListMenuView.swift in Sources */,
 				8492CE5225E0D35F00115EB6 /* TaskListsCell.swift in Sources */,
 				8476211525D13B430060EF36 /* ProfileCell.swift in Sources */,
 				8492CE7D25E1476C00115EB6 /* TaskListInputFormView.swift in Sources */,
 				8492CD8F25DF79A200115EB6 /* ArchiveImageView.swift in Sources */,
 				8492CD9425DF7E0000115EB6 /* Date+Extensions.swift in Sources */,
+				84F7EB8825EA504D004FFB48 /* CalendarView.swift in Sources */,
 				84C4E3AF25E3790C006F7619 /* UserDefaults+Extensions.swift in Sources */,
 				8476210A25D139640060EF36 /* ProfileHeaderView.swift in Sources */,
 				847620E125D128770060EF36 /* TaskListController.swift in Sources */,
@@ -430,20 +484,26 @@
 				8476207025D09CCF0060EF36 /* TaskListHeaderView.swift in Sources */,
 				846D2F5725D032FF00D9C63D /* SettingsController.swift in Sources */,
 				8476212625D21A770060EF36 /* CustomCollectionViewFlowLayout.swift in Sources */,
+				84F7EB7E25EA5000004FFB48 /* TimePickerCell.swift in Sources */,
 				8492CEBD25E26D0600115EB6 /* TaskListMenuHeaderView.swift in Sources */,
 				846D2F3325CEF7C800D9C63D /* CustomTabBar.swift in Sources */,
 				8492CDFD25E001CF00115EB6 /* TaskList.swift in Sources */,
 				8415412A2564638900C9D6F3 /* AppDelegate.swift in Sources */,
 				8492CEC725E26D3D00115EB6 /* TaskListMenuCell.swift in Sources */,
+				84F7EB8325EA5025004FFB48 /* SelectDateTimeCell.swift in Sources */,
 				8492CEF525E2ABFA00115EB6 /* UndoSnackBar.swift in Sources */,
 				8492CE7225E12CB800115EB6 /* CreateTaskListView.swift in Sources */,
+				84F7EB6925EA4DCA004FFB48 /* DateTimePickerView.swift in Sources */,
 				841541692564650200C9D6F3 /* UIView+Extensions.swift in Sources */,
 				847620CA25D0F6360060EF36 /* TaskCell.swift in Sources */,
 				844DCB0E25CE990B00666392 /* CALayer+Extensions.swift in Sources */,
+				84F7EB9A25EA5098004FFB48 /* CalendarCell.swift in Sources */,
 				8492CEC225E26D2300115EB6 /* TaskListMenuFooterView.swift in Sources */,
 				8415412C2564638900C9D6F3 /* SceneDelegate.swift in Sources */,
+				84F7EB6E25EA4FC7004FFB48 /* DateTimePickerHeaderView.swift in Sources */,
 				8492CD7925DF6E6100115EB6 /* Task.swift in Sources */,
 				84154164256464F300C9D6F3 /* UIColor+Extensions.swift in Sources */,
+				84F7EB9025EA5066004FFB48 /* CalendarCollectionView.swift in Sources */,
 				8492CE3A25E0D0C000115EB6 /* TaskListsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

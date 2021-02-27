@@ -9,6 +9,8 @@ import UIKit
 
 class CreateTaskController: UIViewController {
     
+    private var isDatePicker = false
+    
     public var didSaveTask: ((Task) -> ())?
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -18,7 +20,8 @@ class CreateTaskController: UIViewController {
     }
     
     override var canBecomeFirstResponder: Bool {
-        return true
+        // Prevent the keyboard from being displayed when the date and time picker is displayed.
+        return isDatePicker ? false : true
     }
     
     override var inputAccessoryView: UIView? {
@@ -44,11 +47,26 @@ class CreateTaskController: UIViewController {
         
         v.delegate = self
         containerView.delegate = self
+        
+//        v.didShowKeyboard = { [weak self] in
+//            self?.isDatePicker = false
+//
+//            // Required to toggle the display of the keyboard
+//            self?.becomeFirstResponder()
+//
+//            // Show input form
+//            self?.containerView.alpha = 1.0
+//            self?.showKeyboard()
+//        }
+//
+//        v.didSelectedDateAndTime = { [weak self] selectedDate in
+//            self?.containerView.setSelectedDate(selectedDate)
+//        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) {
             self.showKeyboard()
         }
@@ -57,19 +75,55 @@ class CreateTaskController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        self.hideKeyboard()
+        self.hideKeyboard(nil)
     }
     
     private func showKeyboard() {
         containerView.textField.becomeFirstResponder()
     }
     
-    private func hideKeyboard() {
+    private func hideKeyboard(_ completion: (() -> Void)?) {
         containerView.textField.resignFirstResponder()
+        
+        guard let completion = completion else { return }
+        completion()
+    }
+    
+    private func reshowKeyboard() {
+        self.isDatePicker = false
+        
+        // Required to toggle the display of the keyboard
+        self.becomeFirstResponder()
+        
+        // Show input form
+        self.containerView.alpha = 1.0
+        self.showKeyboard()
     }
 }
 
 extension CreateTaskController: CreateTaskViewDelegate, TaskInputAccessoryViewDelegate {
+    
+    // MARK: - CreateTaskViewDelegate
+    
+    func didSelectDateTime(_ date: Date) {
+        self.v.hideDateAndTimePicker {
+            self.containerView.setSelectedDate(date)
+            self.reshowKeyboard()
+        }
+    }
+    
+    func didHideDateTimePicker() {
+        self.reshowKeyboard()
+    }
+    
+    func didShowIsRepeatVc() {
+        let vc = UIViewController()
+        vc.view.backgroundColor = UIColor.scheme.background
+        present(vc, animated: true, completion: nil)
+    }
+    
+    
+    // MARK: - TaskInputAccessoryViewDelegate
     
     func didBack() {
         self.dismiss(animated: true, completion: nil)
@@ -80,8 +134,14 @@ extension CreateTaskController: CreateTaskViewDelegate, TaskInputAccessoryViewDe
         self.dismiss(animated: true, completion: nil)
     }
     
-    func didSelectDueDate() {
-        print("selcted duedate")
+    func didShowDateTimePicker() {
+        containerView.textField.resignFirstResponder()
         
+        UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseIn) {
+            self.inputAccessoryView?.alpha = 0.0
+        } completion: { (finished) in
+            self.isDatePicker = true
+            self.v.showDateAndTimePicker()
+        }
     }
 }

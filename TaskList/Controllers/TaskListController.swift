@@ -121,12 +121,24 @@ extension TaskListController: TaskListViewDelegate {
     
     func didCreateTask() {
         let createTaskVC = CreateTaskController()
+        createTaskVC.modalTransitionStyle = .crossDissolve
+        createTaskVC.modalPresentationStyle = .overCurrentContext
+        
         createTaskVC.didSaveTask = { [weak self] newTask in
             self?.datasource.appendTask(newTask)
             self?.reloadData()
         }
-        createTaskVC.modalTransitionStyle = .crossDissolve
-        createTaskVC.modalPresentationStyle = .overCurrentContext
+        
+//        createTaskVC.didShowDateAndTimePicker = { [weak self] in
+//            let window = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first
+//
+//            let dateAndTimePickerView = DateAndTimePickerView()
+//            dateAndTimePickerView.frame = (self?.view.frame)!
+//            dateAndTimePickerView.setupViews()
+//
+//            window?.addSubview(dateAndTimePickerView)
+//        }
+        
         present(createTaskVC, animated: true, completion: nil)
     }
     
@@ -250,11 +262,6 @@ extension TaskListController: UICollectionViewDelegateFlowLayout, UICollectionVi
 extension TaskListController: TaskListHeaderViewDelegate {
     
     func didShowProfile() {
-//        let profileVC = ProfileController()
-//        profileVC.modalTransitionStyle = .crossDissolve
-//        profileVC.modalPresentationStyle = .overCurrentContext
-//        present(profileVC, animated: true, completion: nil)
-        
         let window = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first
         
         let profileView = ProfileView()

@@ -18,7 +18,10 @@ extension UIColor {
     static let noirBlack = UIColor.rgb(red: 42, green: 46, blue: 59)
     static let mainBlue = UIColor.rgb(red: 46, green: 88, blue: 226)
     static let mainNavy = UIColor.rgb(red: 115, green: 76, blue: 246)
-    static let removeRed = UIColor.rgb(red: 239, green: 83, blue: 80)
+    static let lightGreen = UIColor.rgb(red: 0, green: 230, blue: 118)
+    static let darkGreen = UIColor.rgb(red: 102, green: 187, blue: 106)
+    static let lightRed = UIColor.rgb(red: 229, green: 115, blue: 115)
+    static let darkRed = UIColor.rgb(red: 239, green: 83, blue: 80)
     
     struct scheme {
         public static let primary = UIColor.primary
@@ -26,6 +29,7 @@ extension UIColor {
         public static let surface = UIColor.surface
         public static let label = UIColor.label
         public static let secondaryLabel = UIColor.secondaryLabel
+        public static let check = UIColor.check
         public static let remove = UIColor.remove
         public static let icon = UIColor.icon
         public static let button = UIColor.button
@@ -115,16 +119,32 @@ extension UIColor {
         return color
     }
     
-    static private var remove: UIColor {
+    static private var check: UIColor {
         guard #available(iOS 13.0, *) else {
-            return .removeRed
+            return .darkGreen
         }
         
         let color = UIColor { (traitCollction) -> UIColor in
             if traitCollction.userInterfaceStyle == .dark {
-                return .removeRed
+                return .lightGreen
             } else {
-                return .removeRed
+                return .darkGreen
+            }
+        }
+        
+        return color
+    }
+    
+    static private var remove: UIColor {
+        guard #available(iOS 13.0, *) else {
+            return .darkRed
+        }
+        
+        let color = UIColor { (traitCollction) -> UIColor in
+            if traitCollction.userInterfaceStyle == .dark {
+                return .lightRed
+            } else {
+                return .darkRed
             }
         }
         
