@@ -16,6 +16,7 @@ class TaskListsDataSource {
     private var taskLists: [TaskList] = []
     
     init() {
+        print("init")
         let dir = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
         let url = dir.appendingPathComponent(filename)
         let fileExists = fileManager.fileExists(atPath: url.path)
@@ -27,13 +28,17 @@ class TaskListsDataSource {
             self.loadSelectedIndex()
         } else {
             // Create task_list.json
-            let taskList = TaskList(title: "Today Tasks")
+            let taskList = TaskList(title: "My Tasks")
             self.taskLists.append(taskList)
             self.saveTaskLists()
             
             // Save selected Task List
             self.saveSelectedIndex()
         }
+    }
+    
+    public func getTaskLists() -> [TaskList] {
+        return self.taskLists
     }
     
     private func loadSelectedIndex() {
