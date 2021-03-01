@@ -16,7 +16,6 @@ class TaskListsDataSource {
     private var taskLists: [TaskList] = []
     
     init() {
-        print("init")
         let dir = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
         let url = dir.appendingPathComponent(filename)
         let fileExists = fileManager.fileExists(atPath: url.path)
@@ -123,19 +122,22 @@ class TaskListsDataSource {
         switch type {
         case .myOrder:
             
-            let orderedAscending = taskLists.map { $0.tasks.sorted { (t1, t2) -> Bool in
-                return t1.timestamp.compare(t2.timestamp) == .orderedAscending
-            }}
-            
-            print(orderedAscending)
+            for (i, taskList) in zip(taskLists.indices, taskLists) {
+                let sortedTasks = taskList.tasks.sorted { (t1, t2) -> Bool in
+                    return t1.timestamp.compare(t2.timestamp) == .orderedDescending
+                }
+                taskLists[i].tasks = sortedTasks
+            }
             
         case .date:
             
-            let orderedAscending = taskLists.map { $0.tasks.sorted { (t1, t2) -> Bool in
-                return t1.duedate.compare(t2.duedate) == .orderedAscending
-            }}
+            for (i, taskList) in zip(taskLists.indices, taskLists) {
+                let sortedTasks = taskList.tasks.sorted { (t1, t2) -> Bool in
+                    return t1.duedate?.compare(t2.duedate ?? Date()) == .orderedAscending
+                }
+                self.taskLists[i].tasks = sortedTasks
+            }
             
-            print(orderedAscending)
         }
         
         self.saveTaskLists()
@@ -181,6 +183,11 @@ class TaskListsDataSource {
     func removeTask(at index: Int) {
         self.taskLists[selectedIndex].tasks.remove(at: index)
         self.saveTaskLists()
+    }
+    
+    func updateTask(at index: Int, _ task: Task) {
+        self.taskLists[selectedIndex].tasks.remove(at: index)
+        self.taskLists[selectedIndex].tasks.insert(task, at: index)
     }
     
     func completeTask(at index: Int) {

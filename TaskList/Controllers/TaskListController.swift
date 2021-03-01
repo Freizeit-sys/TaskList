@@ -129,16 +129,6 @@ extension TaskListController: TaskListViewDelegate {
             self?.reloadData()
         }
         
-//        createTaskVC.didShowDateAndTimePicker = { [weak self] in
-//            let window = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first
-//
-//            let dateAndTimePickerView = DateAndTimePickerView()
-//            dateAndTimePickerView.frame = (self?.view.frame)!
-//            dateAndTimePickerView.setupViews()
-//
-//            window?.addSubview(dateAndTimePickerView)
-//        }
-        
         present(createTaskVC, animated: true, completion: nil)
     }
     
@@ -213,6 +203,19 @@ extension TaskListController: TaskListViewDelegate {
 }
 
 extension TaskListController: UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath) as! TaskCell
+        let createTaskVC = CreateTaskController()
+        createTaskVC.modalTransitionStyle = .crossDissolve
+        createTaskVC.modalPresentationStyle = .overCurrentContext
+        createTaskVC.task = cell.task
+        createTaskVC.didSaveTask = { [weak self] task in
+            self?.datasource.updateTask(at: indexPath.item, task)
+            self?.reloadData()
+        }
+        present(createTaskVC, animated: true, completion: nil)
+    }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1

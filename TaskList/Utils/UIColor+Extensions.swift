@@ -26,6 +26,7 @@ extension UIColor {
     struct scheme {
         public static let primary = UIColor.primary
         public static let background = UIColor.background
+        public static let secondaryBackground = UIColor.secondaryBackground
         public static let surface = UIColor.surface
         public static let label = UIColor.label
         public static let secondaryLabel = UIColor.secondaryLabel
@@ -65,6 +66,22 @@ extension UIColor {
                 return chacoalBlack
             } else {
                 return blueGray
+            }
+        }
+        
+        return color
+    }
+    
+    static private var secondaryBackground: UIColor {
+        guard #available(iOS 13.0, *) else  {
+            return .white
+        }
+        
+        let color = UIColor { (traitCollection) -> UIColor in
+            if traitCollection.userInterfaceStyle == .dark {
+                return chacoalBlack
+            } else {
+                return .white
             }
         }
         

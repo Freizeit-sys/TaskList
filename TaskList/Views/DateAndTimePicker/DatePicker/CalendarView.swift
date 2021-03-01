@@ -25,7 +25,7 @@ class CalendarView: UIView, UIScrollViewDelegate {
     
     private let scrollView: UIScrollView = {
         let sv = UIScrollView()
-        sv.backgroundColor = UIColor.scheme.background
+        sv.backgroundColor = UIColor.scheme.secondaryBackground
         sv.isPagingEnabled = true
         sv.showsHorizontalScrollIndicator = false
         sv.showsVerticalScrollIndicator = false
@@ -34,7 +34,7 @@ class CalendarView: UIView, UIScrollViewDelegate {
     
     private let prevMonthButton: UIButton = {
         let button = UIButton(type: .system)
-        button.backgroundColor = UIColor.scheme.background
+        button.backgroundColor = UIColor.scheme.secondaryBackground
         let image = UIImage(named: "chevron_left")?.withRenderingMode(.alwaysTemplate)
         button.setImage(image, for: .normal)
         button.tintColor = UIColor.scheme.button
@@ -50,7 +50,7 @@ class CalendarView: UIView, UIScrollViewDelegate {
     
     private let nextMonthButton: UIButton = {
         let button = UIButton(type: .system)
-        button.backgroundColor = UIColor.scheme.background
+        button.backgroundColor = UIColor.scheme.secondaryBackground
         let image = UIImage(named: "chevron_right")?.withRenderingMode(.alwaysTemplate)
         button.setImage(image, for: .normal)
         button.tintColor = UIColor.scheme.button

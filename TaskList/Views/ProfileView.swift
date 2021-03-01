@@ -31,7 +31,7 @@ class ProfileView: UIView {
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        cv.backgroundColor = UIColor.scheme.background
+        cv.backgroundColor = UIColor.scheme.secondaryBackground
         cv.alpha = 0.0
         cv.showsVerticalScrollIndicator = false
         cv.isScrollEnabled = false

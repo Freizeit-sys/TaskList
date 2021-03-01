@@ -24,7 +24,7 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
             titleLabel.text = _task.title
             
             let title = _task.title
-            let duedate = _task.duedate.string(format: "yyyy-MM-dd HH:mm")
+            let duedate = _task.duedate?.string(format: "yyyy-MM-dd HH:mm") ?? ""
             
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineSpacing = 4.0

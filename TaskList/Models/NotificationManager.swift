@@ -38,11 +38,11 @@ class NotificationManager {
                 let duedate = task.duedate
                 dateComponents.calendar = calendarManager.calendar
                 dateComponents.timeZone = calendarManager.calendar.timeZone
-                dateComponents.year = duedate.year
-                dateComponents.month = duedate.month
-                dateComponents.day = duedate.day
-                dateComponents.hour = duedate.hour
-                dateComponents.minute = duedate.minute
+                dateComponents.year = duedate?.year
+                dateComponents.month = duedate?.month
+                dateComponents.day = duedate?.day
+                dateComponents.hour = duedate?.hour
+                dateComponents.minute = duedate?.minute
                 
                 // Set content
                 content.title = ""
@@ -70,5 +70,4 @@ class NotificationManager {
 //            UNUserNotificationCenter.current().add(request)
 //        }
 //    }
-    
 }

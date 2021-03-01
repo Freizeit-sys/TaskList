@@ -33,7 +33,7 @@ class DateTimePickerView: UIView {
     let tableView: UITableView = {
         let tv = UITableView()
         tv.translatesAutoresizingMaskIntoConstraints = false
-        tv.backgroundColor = .clear
+        tv.backgroundColor = UIColor.scheme.secondaryBackground
         tv.tableFooterView = UIView(frame: .zero)
         tv.separatorInset = .zero
         tv.separatorStyle = .singleLine
@@ -204,7 +204,7 @@ extension DateTimePickerView: UITableViewDelegate, UITableViewDataSource {
         case .repeat:
             
             let cell = tableView.dequeueReusableCell(withIdentifier: cellId4, for: indexPath)
-            cell.backgroundColor = UIColor.scheme.background
+            cell.backgroundColor = UIColor.scheme.secondaryBackground
             cell.textLabel?.text = "Does not repeat"
             cell.textLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
             cell.accessoryType = .disclosureIndicator

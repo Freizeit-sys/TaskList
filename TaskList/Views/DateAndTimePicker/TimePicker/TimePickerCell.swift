@@ -44,7 +44,7 @@ class TimePickerCell: UITableViewCell {
     }
     
     private func commonInit() {
-        contentView.backgroundColor = UIColor.scheme.background
+        contentView.backgroundColor = UIColor.scheme.secondaryBackground
         contentView.addSubview(timePicker)
         
         timePicker.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true

@@ -62,7 +62,7 @@ class TaskListInputFormView: UIView {
     
     private let createRenameButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitleColor(UIColor.scheme.button, for: .normal)
+        button.setTitleColor(UIColor.scheme.primary, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         button.addTarget(self, action: #selector(handleCreateRename), for: .touchUpInside)
         return button
@@ -118,7 +118,7 @@ class TaskListInputFormView: UIView {
     }
     
     private func toggleCreateButtonIsEnable(_ isEnabled: Bool, animated: Bool = true) {
-        let textColor: UIColor = isEnabled ? .black : .lightGray
+        let textColor: UIColor = isEnabled ? UIColor.scheme.primary : .systemGray
         UIView.transition(with: createRenameButton, duration: 0.3, options: .curveEaseOut) {
             self.createRenameButton.setTitleColor(textColor, for: .normal)
         } completion: { (finished) in

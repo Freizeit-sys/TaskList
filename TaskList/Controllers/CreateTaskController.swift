@@ -9,9 +9,19 @@ import UIKit
 
 class CreateTaskController: UIViewController {
     
+    var isEdit: Bool = false
+    
+    var task: Task? {
+        didSet {
+            guard let _task = self.task else { return }
+            self.containerView.task = _task
+        }
+    }
+    
     private var isDatePicker = false
     
     public var didSaveTask: ((Task) -> ())?
+    public var didUpdateTask: ((Task) -> ())?
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         // Did change keyboard and input form view backgournd color.
@@ -32,7 +42,7 @@ class CreateTaskController: UIViewController {
         // height = contents height
         let frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 168) // 168
         let view = TaskInputAccessoryView(frame: frame)
-        view.backgroundColor = UIColor.scheme.background
+        view.backgroundColor = UIColor.scheme.secondaryBackground
         return view
     }()
     
@@ -45,23 +55,12 @@ class CreateTaskController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if self.task == nil {
+            self.task = Task(title: "")
+        }
+        
         v.delegate = self
         containerView.delegate = self
-        
-//        v.didShowKeyboard = { [weak self] in
-//            self?.isDatePicker = false
-//
-//            // Required to toggle the display of the keyboard
-//            self?.becomeFirstResponder()
-//
-//            // Show input form
-//            self?.containerView.alpha = 1.0
-//            self?.showKeyboard()
-//        }
-//
-//        v.didSelectedDateAndTime = { [weak self] selectedDate in
-//            self?.containerView.setSelectedDate(selectedDate)
-//        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -117,9 +116,18 @@ extension CreateTaskController: CreateTaskViewDelegate, TaskInputAccessoryViewDe
     }
     
     func didShowIsRepeatVc() {
-        let vc = UIViewController()
-        vc.view.backgroundColor = UIColor.scheme.background
-        present(vc, animated: true, completion: nil)
+        let repeatVC = RepeatController()
+        repeatVC.didSetRepeat = { [weak self] `repeat` in
+            self?.task?.repeat = `repeat`
+        }
+        
+        if let _newTask = self.task {
+            repeatVC.task = _newTask
+        } else {
+            repeatVC.task = Task(title: "", duedate: Date())
+        }
+                
+        self.present(repeatVC, animated: true, completion: nil)
     }
     
     
@@ -130,7 +138,22 @@ extension CreateTaskController: CreateTaskViewDelegate, TaskInputAccessoryViewDe
     }
     
     func didSave(_ task: Task) {
-        self.didSaveTask?(task)
+        if self.isEdit {
+            guard let _task = self.task else { return }
+            self.didUpdateTask?(_task)
+        } else {
+            self.task?.title = task.title
+            self.task?.duedate = task.duedate
+            self.task?.completed = task.completed
+            self.task?.timestamp = task.timestamp
+            
+            guard let _newTask = self.task else { return }
+            
+            if _newTask.title != "" {
+                self.didSaveTask?(_newTask)
+            }
+        }
+        
         self.dismiss(animated: true, completion: nil)
     }
     

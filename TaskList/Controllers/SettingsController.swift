@@ -63,7 +63,7 @@ class SettingsController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.v.backgroundColor = UIColor.scheme.background
+        self.v.backgroundColor = UIColor.scheme.secondaryBackground
         self.setupCollectionView()
     }
     

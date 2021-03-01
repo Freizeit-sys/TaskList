@@ -57,6 +57,7 @@
 		84F7EB9A25EA5098004FFB48 /* CalendarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7EB9925EA5098004FFB48 /* CalendarCell.swift */; };
 		84F7EBA225EA50AA004FFB48 /* CalendarHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7EBA125EA50AA004FFB48 /* CalendarHeaderView.swift */; };
 		84F7EBC225EB3D40004FFB48 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7EBC125EB3D40004FFB48 /* NotificationManager.swift */; };
+		84F7EBE025ECDF16004FFB48 /* RepeatController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F7EBD525ECDEC7004FFB48 /* RepeatController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -133,6 +134,7 @@
 		84F7EB9925EA5098004FFB48 /* CalendarCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarCell.swift; sourceTree = "<group>"; };
 		84F7EBA125EA50AA004FFB48 /* CalendarHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderView.swift; sourceTree = "<group>"; };
 		84F7EBC125EB3D40004FFB48 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		84F7EBD525ECDEC7004FFB48 /* RepeatController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -221,6 +223,7 @@
 				8415416D256466BD00C9D6F3 /* TaskListController.swift */,
 				8492CD9825DF852200115EB6 /* CreateTaskController.swift */,
 				846D2F5625D032FF00D9C63D /* SettingsController.swift */,
+				84F7EBD525ECDEC7004FFB48 /* RepeatController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -464,6 +467,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84F7EBE025ECDF16004FFB48 /* RepeatController.swift in Sources */,
 				8492CEF025E29E2800115EB6 /* TaskListsFooterView.swift in Sources */,
 				8492CEE125E28F8000115EB6 /* TaskInputAccessoryView.swift in Sources */,
 				84F7EB7625EA4FE6004FFB48 /* DatePickerCell.swift in Sources */,

@@ -17,7 +17,18 @@ class TaskInputAccessoryView: UIView {
     
     weak var delegate: TaskInputAccessoryViewDelegate?
     
-    let titleLabel: UILabel = {
+    var task: Task? {
+        didSet {
+            guard let _task = self.task else { return }
+            textField.text = _task.title
+            duedateButton.duedate = _task.duedate ?? Date()
+            
+            saveButton.setTitleColor(UIColor.scheme.primary, for: .normal)
+            saveButton.isEnabled = true
+        }
+    }
+    
+    private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Create new task"
         label.textColor = UIColor.scheme.label
@@ -45,7 +56,7 @@ class TaskInputAccessoryView: UIView {
     let saveButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Save", for: .normal)
-        button.setTitleColor(UIColor.scheme.button, for: .normal)
+        button.setTitleColor(.systemGray, for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         button.isEnabled = false
         button.addTarget(self, action: #selector(handleSave), for: .touchUpInside)
@@ -107,7 +118,7 @@ class TaskInputAccessoryView: UIView {
     }
     
     private func toggleSaveButtonIsEnabled(_ isEnabled: Bool) {
-        let textColor: UIColor = isEnabled ? .white : .darkGray
+        let textColor: UIColor = isEnabled ? UIColor.scheme.primary : .systemGray
         UIView.transition(with: saveButton, duration: 0.3, options: .curveEaseOut) {
             self.saveButton.setTitleColor(textColor, for: .normal)
         } completion: { (finished) in

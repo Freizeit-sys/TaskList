@@ -44,7 +44,7 @@ class TaskListMenuView: UIView {
     
     private let collectionView: UICollectionView = {
         let cv = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-        cv.backgroundColor = UIColor.scheme.background
+        cv.backgroundColor = UIColor.scheme.secondaryBackground
         cv.showsVerticalScrollIndicator = false
         cv.isScrollEnabled = false
         cv.layer.cornerRadius = 10
