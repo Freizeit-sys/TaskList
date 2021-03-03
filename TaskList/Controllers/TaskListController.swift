@@ -9,6 +9,14 @@ import UIKit
 
 class TaskListController: UIViewController {
     
+    var user: User? {
+        didSet {
+            guard let user = self.user else { return }
+            headerView.profileImageURL = user.profileImageURL
+        }
+    }
+    
+    private let firebaseHelper = FirebaseHelper()
     private let datasource = TaskListsDataSource()
     private let cellId = "cellId"
     private let headerId = "headerId"
@@ -23,8 +31,21 @@ class TaskListController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let isLogin = firebaseHelper.didCheckLogin()
+        if !isLogin {
+            DispatchQueue.main.async {
+                self.showSignInController()
+            }
+        }
+        
         self.setupViews()
         self.setupNavigationBar()
+    }
+    
+    private func showSignInController() {
+        let signInController = SignInController()
+        signInController.isModalInPresentation = true
+        present(signInController, animated: true, completion: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {

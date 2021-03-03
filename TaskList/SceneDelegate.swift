@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import UserNotifications
+import Firebase
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
@@ -24,9 +24,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
             window.makeKeyAndVisible()
-                
-            let rootViewController = UINavigationController(rootViewController: TaskListController())
-                //CustomNavigationController(rootViewController: TaskListController(), navigationBarClass: CustomNavigationBarA.self, toolbarClass: nil)
+            
+            let rootViewController = TaskListController()
             window.rootViewController = rootViewController
             
             self.window = window

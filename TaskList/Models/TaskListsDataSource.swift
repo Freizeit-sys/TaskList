@@ -188,6 +188,7 @@ class TaskListsDataSource {
     func updateTask(at index: Int, _ task: Task) {
         self.taskLists[selectedIndex].tasks.remove(at: index)
         self.taskLists[selectedIndex].tasks.insert(task, at: index)
+        self.saveTaskLists()
     }
     
     func completeTask(at index: Int) {

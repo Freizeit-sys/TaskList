@@ -37,7 +37,14 @@ class TaskListHeaderView: UICollectionReusableView {
         }
     }
     
-    let titleLabel: UILabel = {
+    var profileImageURL: String? {
+        didSet {
+            guard let profileImageURL = self.profileImageURL else { return }
+            profileImageView.cacheImage(profileImageURL)
+        }
+    }
+    
+    private let titleLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
         label.numberOfLines = 2
@@ -45,7 +52,7 @@ class TaskListHeaderView: UICollectionReusableView {
         return label
     }()
     
-    let profileImageShadowView: UIView = {
+    private let profileImageShadowView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.scheme.surface
         view.layer.cornerRadius = 48 / 2
@@ -53,14 +60,21 @@ class TaskListHeaderView: UICollectionReusableView {
         return view
     }()
     
-    let profileImageButton: UIButton = {
-        let button = UIButton(type: .system)
-        let image = UIImage(named: "user")?.withRenderingMode(.alwaysOriginal)
-        button.setImage(image, for: .normal)
-        button.imageView?.contentMode = .scaleAspectFill
-        button.clipsToBounds = true
-        button.layer.cornerRadius = 48 / 2
-        return button
+    private let profileImageView: UIImageView = {
+        let iv = UIImageView()
+        iv.tintColor = UIColor.scheme.icon
+        iv.image = UIImage(named: "account")?.withRenderingMode(.alwaysTemplate)
+        iv.contentMode = .center
+        iv.clipsToBounds = true
+        iv.isUserInteractionEnabled = true
+        iv.layer.cornerRadius = 48 / 2
+        return iv
+    }()
+    
+    private let tapGesture: UITapGestureRecognizer = {
+        let gesture = UITapGestureRecognizer()
+        gesture.cancelsTouchesInView = false
+        return gesture
     }()
     
     override init(frame: CGRect) {
@@ -78,15 +92,16 @@ class TaskListHeaderView: UICollectionReusableView {
         
         addSubview(titleLabel)
         addSubview(profileImageShadowView)
-        profileImageShadowView.addSubview(profileImageButton)
+        profileImageShadowView.addSubview(profileImageView)
         
         titleLabel.anchor(top: nil, left: self.leftAnchor, bottom: self.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 40, paddingBottom: 16, paddingRight: 0, width: 0, height: 0)
         
         profileImageShadowView.anchor(top: nil, left: nil, bottom: self.bottomAnchor, right: self.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 16, paddingRight: 40, width: 48, height: 48)
         
-        profileImageButton.fillSuperView()
+        profileImageView.fillSuperView()
         
-        profileImageButton.addTarget(self, action: #selector(handleShowProfile), for: .touchUpInside)
+        tapGesture.addTarget(self, action: #selector(handleShowProfile))
+        profileImageView.addGestureRecognizer(tapGesture)
     }
     
     @objc func handleShowProfile() {

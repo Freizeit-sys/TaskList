@@ -23,8 +23,10 @@ class TaskInputAccessoryView: UIView {
             textField.text = _task.title
             duedateButton.duedate = _task.duedate ?? Date()
             
-            saveButton.setTitleColor(UIColor.scheme.primary, for: .normal)
-            saveButton.isEnabled = true
+            if task?.title != nil {
+                saveButton.setTitleColor(UIColor.scheme.primary, for: .normal)
+                saveButton.isEnabled = true
+            }
         }
     }
     
@@ -158,7 +160,7 @@ extension TaskInputAccessoryView: UITextFieldDelegate {
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
-        let maxLength: Int = 20
+        let maxLength: Int = 40
         let text = textField.text! + string
         
         if text.count <= maxLength {

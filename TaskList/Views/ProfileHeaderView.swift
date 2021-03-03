@@ -26,9 +26,9 @@ class ProfileHeaderView: UICollectionReusableView {
     
     let profileImageView: UIImageView = {
         let iv = UIImageView()
-        let image = UIImage(named: "user")?.withRenderingMode(.alwaysOriginal)
-        iv.image = image
-        iv.contentMode = .scaleAspectFill
+        iv.tintColor = UIColor.scheme.icon
+        iv.image = UIImage(named: "account")?.withRenderingMode(.alwaysOriginal)
+        iv.contentMode = .center
         iv.layer.cornerRadius = 44 / 2
         iv.clipsToBounds = true
         return iv
