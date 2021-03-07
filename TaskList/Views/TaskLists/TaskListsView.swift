@@ -15,6 +15,7 @@ class TaskListsView: UIView {
     
     weak var delegate: TaskListsViewDelegate?
     
+    var tasklists: [TaskList]?
     var datasource: TaskListsDataSource!
     
     var didCreateTaskList: (() -> ())?
@@ -72,8 +73,10 @@ class TaskListsView: UIView {
         overlayView.frame = self.frame
         self.addSubview(overlayView)
         
+        guard let tasklists = self.tasklists else { return }
+        
         let bottomInset = UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 0
-        let cellCount: CGFloat = CGFloat(self.datasource.countTaskList())
+        let cellCount: CGFloat = CGFloat(tasklists.count)//CGFloat(self.datasource.countTaskList())
         let height: CGFloat = (cellCount * cellHeight) + footerHeight + (padding * 2) + bottomInset
         collectionView.frame = CGRect(x: 0, y: frame.height, width: frame.width, height: height)
         collectionView.register(TaskListsCell.self, forCellWithReuseIdentifier: cellId)
@@ -162,13 +165,13 @@ extension TaskListsView: UICollectionViewDelegate, UICollectionViewDataSource, U
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.datasource.countTaskList()
+        return self.tasklists!.count//self.datasource.countTaskList()
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! TaskListsCell
         
-        let taskList = self.datasource.taskList(at: indexPath.item)
+        let taskList = tasklists?[indexPath.item]//self.datasource.taskList(at: indexPath.item)
         cell.taskList = taskList
         
         let isSelected = self.datasource.isSelectedTaskList(at: indexPath.item)
@@ -211,7 +214,6 @@ extension TaskListsView: TaskListsFooterViewDelegate {
             self.collectionView.frame = CGRect(x: 0, y: self.frame.height, width: self.frame.width, height: height)
         } completion: { (finished) in
             self.removeFromSuperview()
-            
             
             self.didCreateTaskList?()
         }

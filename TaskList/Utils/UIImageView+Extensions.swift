@@ -38,3 +38,17 @@ extension UIImageView {
         }.resume()
     }
 }
+
+extension UIImage {
+    
+    func resizeImage(_ height: CGFloat) -> UIImage? {
+        let rect = CGRect(x: 0, y: 0, width: height, height: height)
+        
+        UIGraphicsBeginImageContextWithOptions(rect.size, false, UIScreen.main.scale)
+        self.draw(in: rect)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage
+    }
+}

@@ -11,17 +11,17 @@ import GoogleSignIn
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    let notificationManager = NotificationManager()
     
     var window: UIWindow?
+    let authenticationService = AuthenticationService()
+    let notificationManager = NotificationManager()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
         
         FirebaseApp.configure()
         
         GIDSignIn.sharedInstance()?.clientID = "684876868777-jkkkjj62t8gte4o5t50u3dg4u1li023e.apps.googleusercontent.com"
+        GIDSignIn.sharedInstance()?.delegate = self
         
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
@@ -31,6 +31,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Request notification authorization
         self.notificationManager.requestAuthorization()
+        
+        // Set time launchScreen
+        Thread.sleep(forTimeInterval: 0.1)
         
         return true
     }
@@ -53,11 +56,54 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.notificationManager.setNotifications()
     }
     
+    // [START openurl]
+    func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
+        return GIDSignIn.sharedInstance().handle(url)
+    }
+    
+    @available(iOS 9.0, *)
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        if GIDSignIn.sharedInstance()!.handle(url) {
-            return true
-        }
-        return false
+        return GIDSignIn.sharedInstance().handle(url)
     }
 }
 
+extension AppDelegate: GIDSignInDelegate {
+    
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        // Failed to sign in
+        if let error = error {
+            print(error.localizedDescription)
+            return
+        }
+        
+        print("Successfully sign in.")
+        
+        // Use the credentials to authenticate with Firebase.
+        guard let authentication = user.authentication else { return }
+        let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken, accessToken: authentication.accessToken)
+        authenticationService.authenticationToFirebase(with: credential)
+        
+        guard let uid = user.userID,
+        let name = user.profile.name,
+        let email = user.profile.email
+        else { return }
+        
+        var photoURL: String = ""
+        
+        if user.profile.hasImage {
+            let dimension: UInt = UInt(round(24 * UIScreen.main.scale))
+            photoURL = user.profile.imageURL(withDimension: dimension)!.absoluteString
+        }
+        
+        let user = User(uid: uid, name: name, email: email, photoURL: photoURL)
+        
+        // Any processing
+        guard let taskListViewController = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first?.rootViewController as? TaskListController else { return }
+        taskListViewController.user = user
+        
+        // Dismiss sign in view controller
+        if let presentingViewController = GIDSignIn.sharedInstance()?.presentingViewController, presentingViewController is SignInController {
+            presentingViewController.dismiss(animated: true, completion: nil)
+        }
+    }
+}

@@ -23,7 +23,7 @@ class TaskInputAccessoryView: UIView {
             textField.text = _task.title
             duedateButton.duedate = _task.duedate ?? Date()
             
-            if task?.title != nil {
+            if task?.title != "" {
                 saveButton.setTitleColor(UIColor.scheme.primary, for: .normal)
                 saveButton.isEnabled = true
             }

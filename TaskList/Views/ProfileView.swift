@@ -9,6 +9,8 @@ import UIKit
 
 class ProfileView: UIView {
     
+    var user: User?
+    
     public var didSettings: (() -> ())?
     
     private let cellData: [(imageName: String, title: String)] = [(imageName: "settings", title: "Settings"), (imageName: "about", title: "About")]
@@ -116,6 +118,7 @@ extension ProfileView: UICollectionViewDelegateFlowLayout, UICollectionViewDeleg
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId, for: indexPath) as! ProfileHeaderView
+        header.user = self.user
         header.delegate = self
         return header
     }

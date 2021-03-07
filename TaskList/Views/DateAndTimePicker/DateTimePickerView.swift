@@ -95,7 +95,7 @@ class DateTimePickerView: UIView {
         tableView.performBatchUpdates {
             
             self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
-            self.tableView.deleteRows(at: [IndexPath(row: 1, section: 1)], with: .automatic)
+            self.tableView.deleteRows(at: [IndexPath(row: 1, section: 1)], with: .top)
             
         } completion: { (finished) in
             

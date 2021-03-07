@@ -6,19 +6,21 @@
 //
 
 import UIKit
+import GoogleSignIn
 
 class TaskListController: UIViewController {
     
     var user: User? {
         didSet {
-            guard let user = self.user else { return }
-            headerView.profileImageURL = user.profileImageURL
+            v.collectionView.reloadData()
         }
     }
     
-    private let firebaseHelper = FirebaseHelper()
+    private let authenticationService = AuthenticationService()
+    private let firestoreTaskRepository = FirestoreTaskRepository()
     private let datasource = TaskListsDataSource()
     private let cellId = "cellId"
+    private let emptyCellId = "emptyCellId"
     private let headerId = "headerId"
     private var headerView: TaskListHeaderView!
     
@@ -31,12 +33,21 @@ class TaskListController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let isLogin = firebaseHelper.didCheckLogin()
-        if !isLogin {
+        // Test
+        //authenticationService.signOut()
+        
+        // Show sign in view
+        let isLoggedIn: Bool = authenticationService.confirmLoggedIn()
+        if !isLoggedIn {
             DispatchQueue.main.async {
                 self.showSignInController()
             }
+        } else {
+            // Silent sign in
+            authenticationService.googleRestorePreviousSignIn()
         }
+        
+        firestoreTaskRepository.fetchTaskLists()
         
         self.setupViews()
         self.setupNavigationBar()
@@ -57,6 +68,7 @@ class TaskListController: UIViewController {
     private func setupViews() {
         self.v.delegate = self
         self.v.collectionView.register(TaskCell.self, forCellWithReuseIdentifier: cellId)
+        self.v.collectionView.register(EmptyTaskCell.self, forCellWithReuseIdentifier: emptyCellId)
         self.v.collectionView.register(TaskListHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
         self.v.collectionView.delegate = self
         self.v.collectionView.dataSource = self
@@ -102,6 +114,7 @@ extension TaskListController: TaskListViewDelegate {
     func didShowMenu() {
         let window = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first
         let taskListsView = TaskListsView()
+        taskListsView.tasklists = firestoreTaskRepository.tasklists
         taskListsView.datasource = self.datasource
         taskListsView.frame = self.view.frame
         taskListsView.setupViews()
@@ -116,7 +129,8 @@ extension TaskListController: TaskListViewDelegate {
             
             createTaskListView.didSaveNewTaskList = { [weak self] newTaskList in
                 // Add task list.
-                self?.datasource.appendTaskList(newTaskList)
+                //self?.datasource.appendTaskList(newTaskList)
+                self?.firestoreTaskRepository.addTaskList(newTaskList)
                 
                 // Change displayed task list.
                 guard let index = self?.datasource.countTaskList() else { return }
@@ -225,57 +239,65 @@ extension TaskListController: TaskListViewDelegate {
 
 extension TaskListController: UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let cell = collectionView.cellForItem(at: indexPath) as! TaskCell
-        let createTaskVC = CreateTaskController()
-        createTaskVC.modalTransitionStyle = .crossDissolve
-        createTaskVC.modalPresentationStyle = .overCurrentContext
-        createTaskVC.task = cell.task
-        createTaskVC.didSaveTask = { [weak self] task in
-            self?.datasource.updateTask(at: indexPath.item, task)
-            self?.reloadData()
-        }
-        present(createTaskVC, animated: true, completion: nil)
-    }
-    
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.datasource.countTask()
+        if self.datasource.countTask() > 0 {
+            return self.datasource.countTask()
+        }
+        return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! TaskCell
-        cell.delegate = self
         
-        let task = self.datasource.task(at: indexPath.item)
-        cell.task = task
-        
-        return cell
+        if datasource.countTask() > 0 {
+            
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! TaskCell
+            cell.delegate = self
+            
+            let task = self.datasource.task(at: indexPath.item)
+            cell.task = task
+            
+            return cell
+            
+        } else {
+            
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: emptyCellId, for: indexPath) as! EmptyTaskCell
+            return cell
+            
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId, for: indexPath) as? TaskListHeaderView
         let taskList = self.datasource.selectedTaskList()
         headerView.title = taskList.title
+        headerView.profileImageURL = user?.photoURL
         headerView.delegate = self
         return headerView
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let dummyCell = TaskCell(frame: CGRect(x: 0, y: 0, width: view.frame.width - 2 * 32, height: 1000))
+        if datasource.countTask() > 0 {
+            let dummyCell = TaskCell(frame: CGRect(x: 0, y: 0, width: view.frame.width - 2 * 32, height: 1000))
+            
+            let task = self.datasource.task(at: indexPath.item)
+            dummyCell.task = task
+            
+            dummyCell.layoutIfNeeded()
+            
+            let targetSize = CGSize(width: view.frame.width - 2 * 32, height: 1000)
+            let estimatedSize = dummyCell.systemLayoutSizeFitting(targetSize)
+            
+            return CGSize(width: view.frame.width - 2 * 32, height: estimatedSize.height)
+        }
         
-        let task = self.datasource.task(at: indexPath.item)
-        dummyCell.task = task
-        
-        dummyCell.layoutIfNeeded()
-        
-        let targetSize = CGSize(width: view.frame.width - 2 * 32, height: 1000)
-        let estimatedSize = dummyCell.systemLayoutSizeFitting(targetSize)
-        
-        return CGSize(width: view.frame.width - 2 * 32, height: estimatedSize.height)
+        let paddingTop: CGFloat = 16
+        let paddingBottom: CGFloat = 40
+        let height: CGFloat = collectionView.frame.height - (100 + paddingTop + paddingBottom + v.safeAreaInsets.top + v.safeAreaInsets.bottom)
+        return CGSize(width: view.frame.width - 2 * 32, height: height)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
@@ -290,6 +312,7 @@ extension TaskListController: TaskListHeaderViewDelegate {
         
         let profileView = ProfileView()
         profileView.frame = self.view.frame
+        profileView.user = self.user
         
         // Show Settings View Controller
         profileView.didSettings = { [weak self] in
@@ -317,6 +340,19 @@ extension TaskListController: TaskCellDelegate {
         }
         
         self.datasource.saveTaskLists()
+    }
+    
+    func didEditTask(_ cell: TaskCell) {
+        guard let indexPath = self.v.collectionView.indexPath(for: cell) else { return }
+        let createTaskVC = CreateTaskController()
+        createTaskVC.modalTransitionStyle = .crossDissolve
+        createTaskVC.modalPresentationStyle = .overCurrentContext
+        createTaskVC.task = cell.task
+        createTaskVC.didSaveTask = { [weak self] task in
+            self?.datasource.updateTask(at: indexPath.item, task)
+            self?.reloadData()
+        }
+        present(createTaskVC, animated: true, completion: nil)
     }
     
     func didDeleteCell(_ cell: TaskCell) {

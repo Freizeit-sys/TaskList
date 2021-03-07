@@ -121,25 +121,30 @@ class TaskListsDataSource {
     func sortTaskList(_ type: SortType) {
         switch type {
         case .myOrder:
-            
             for (i, taskList) in zip(taskLists.indices, taskLists) {
-                let sortedTasks = taskList.tasks.sorted { (t1, t2) -> Bool in
+                let uncompletedTasks = taskList.tasks.filter { $0.completed == false }
+                let completedTasks = taskList.tasks.filter { $0.completed == true }
+                
+                let sortedTasks = uncompletedTasks.sorted { (t1, t2) -> Bool in
                     return t1.timestamp.compare(t2.timestamp) == .orderedDescending
                 }
-                taskLists[i].tasks = sortedTasks
+                
+                let tasks = sortedTasks + completedTasks
+                self.taskLists[i].tasks = tasks
             }
-            
         case .date:
-            
             for (i, taskList) in zip(taskLists.indices, taskLists) {
-                let sortedTasks = taskList.tasks.sorted { (t1, t2) -> Bool in
+                let uncompletedTasks = taskList.tasks.filter { $0.completed == false }
+                let completedTasks = taskList.tasks.filter { $0.completed == true }
+                
+                let sortedTasks = uncompletedTasks.sorted { (t1, t2) -> Bool in
                     return t1.duedate?.compare(t2.duedate ?? Date()) == .orderedAscending
                 }
-                self.taskLists[i].tasks = sortedTasks
+                
+                let tasks = sortedTasks + completedTasks
+                self.taskLists[i].tasks = tasks
             }
-            
         }
-        
         self.saveTaskLists()
     }
     
@@ -192,7 +197,6 @@ class TaskListsDataSource {
     }
     
     func completeTask(at index: Int) {
-        // Complete task
         self.taskLists[selectedIndex].tasks[index].completed = true
         
         let fromIndex = index
@@ -201,7 +205,6 @@ class TaskListsDataSource {
     }
     
     func uncompleteTask(at index: Int) {
-        // Uncomplete task
         self.taskLists[selectedIndex].tasks[index].completed = false
         
         let fromIndex = index

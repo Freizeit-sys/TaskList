@@ -15,6 +15,15 @@ class ProfileHeaderView: UICollectionReusableView {
     
     weak var delegate: ProfileHeaderViewDelegate?
     
+    var user: User? {
+        didSet {
+            guard let user = self.user else { return }
+            profileImageView.cacheImage(user.photoURL)
+            usernameLabel.text = user.name
+            emailLabel.text = user.email
+        }
+    }
+    
     let profileImageShadowView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.scheme.surface
@@ -27,8 +36,8 @@ class ProfileHeaderView: UICollectionReusableView {
     let profileImageView: UIImageView = {
         let iv = UIImageView()
         iv.tintColor = UIColor.scheme.icon
-        iv.image = UIImage(named: "account")?.withRenderingMode(.alwaysOriginal)
-        iv.contentMode = .center
+        iv.image = UIImage(named: "account")?.withRenderingMode(.alwaysTemplate)
+        iv.contentMode = .scaleAspectFit
         iv.layer.cornerRadius = 44 / 2
         iv.clipsToBounds = true
         return iv

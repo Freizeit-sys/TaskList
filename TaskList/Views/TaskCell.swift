@@ -9,6 +9,7 @@ import UIKit
 
 protocol TaskCellDelegate: class {
     func didComplete(_ cell: TaskCell)
+    func didEditTask(_ cell: TaskCell)
     func didDeleteCell(_ cell: TaskCell)
 }
 
@@ -24,27 +25,54 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
             titleLabel.text = _task.title
             
             let title = _task.title
-            let duedate = _task.duedate?.string(format: "yyyy-MM-dd HH:mm") ?? ""
+            
+            var isExpired: Bool = false
+            var duedateString: String!
+            if let duedate = _task.duedate {
+                if duedate.isToday() {
+                    duedateString = "Today " + duedate.string(format: "HH:mm")
+                } else if duedate.isTommorow() {
+                    duedateString = "Tommorow " + duedate.string(format: "HH:mm")
+                } else if duedate.isYesterday() {
+                    duedateString = "Yesterday " + duedate.string(format: "HH:mm")
+                } else if duedate.zeroclock < Date().zeroclock {
+                    isExpired = true
+                    duedateString = duedate.string(format: "yyyy-MM-dd HH:mm")
+                } else {
+                    duedateString = duedate.string(format: "yyyy-MM-dd HH:mm")
+                }
+            }
+            
+            let isCompleted = _task.completed
             
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineSpacing = 4.0
             
             let attributed1: [NSAttributedString.Key: Any] = [
                 .paragraphStyle: paragraphStyle,
-                .foregroundColor: UIColor.scheme.label,
-                .font: UIFont.systemFont(ofSize: 16, weight: .semibold)
+                .foregroundColor: isCompleted ? UIColor.scheme.secondaryLabel : UIColor.scheme.label,
+                .font: UIFont.systemFont(ofSize: 16, weight: .semibold),
+                .strikethroughStyle: isCompleted ? 1 : 0,
+                .strikethroughColor: UIColor.scheme.secondaryLabel
             ]
             
-            let attributed2: [NSAttributedString.Key: Any] = [
+            let attributed2: [NSAttributedString.Key: Any] = isCompleted ? [
                 .foregroundColor: UIColor.scheme.secondaryLabel,
-                .font: UIFont.systemFont(ofSize: 13, weight: .regular)
+                .font: UIFont.systemFont(ofSize: 13, weight: .regular),
+                .strikethroughStyle: isCompleted ? 1 : 0,
+                .strikethroughColor: UIColor.scheme.secondaryLabel
+            ] : [
+                .foregroundColor: isExpired ? UIColor.scheme.remove : UIColor.scheme.secondaryLabel,
+                .font: UIFont.systemFont(ofSize: 13, weight: .regular),
             ]
             
             let attributedText = NSMutableAttributedString(string: title, attributes: attributed1)
-            attributedText.append(NSAttributedString(string: "\n" + duedate, attributes: attributed2))
-            titleLabel.attributedText = attributedText
+            attributedText.append(NSAttributedString(string: "\n" + duedateString, attributes: attributed2))
             
-            let isCompleted = _task.completed
+            UIView.transition(with: titleLabel, duration: 0.3, options: .transitionCrossDissolve, animations: {
+                self.titleLabel.attributedText = attributedText
+            }, completion: nil)
+            
             let imageName = isCompleted ? "checked" : "unchecked"
             let image = UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate)
             completeButton.setImage(image, for: .normal)
@@ -92,7 +120,13 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
         return view
     }()
     
-    let panGesture: UIPanGestureRecognizer = {
+    private let tapGesture: UITapGestureRecognizer = {
+        let tg = UITapGestureRecognizer()
+        tg.cancelsTouchesInView = false
+        return tg
+    }()
+    
+    private let panGesture: UIPanGestureRecognizer = {
         let pg = UIPanGestureRecognizer()
         pg.cancelsTouchesInView = false
         return pg
@@ -171,6 +205,7 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
         
         cellContents.addSubview(completeButton)
         cellContents.addSubview(titleLabel)
+        cellContents.addGestureRecognizer(tapGesture)
         cellContents.addGestureRecognizer(panGesture)
         
         cellContents.fillSuperView()
@@ -182,6 +217,9 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
         completeButton.centerYAnchor.constraint(equalTo: self.cellContents.centerYAnchor).isActive = true
         
         titleLabel.anchor(top: self.cellContents.topAnchor, left: completeButton.rightAnchor, bottom: self.cellContents.bottomAnchor, right: self.cellContents.rightAnchor, paddingTop: 24, paddingLeft: 10, paddingBottom: 24, paddingRight: 48, width: 0, height: 0)
+        
+        tapGesture.addTarget(self, action: #selector(handleTapGesture(_:)))
+        tapGesture.delegate = self
         
         panGesture.addTarget(self, action: #selector(handlePanGesture(_:)))
         panGesture.delegate = self
@@ -210,8 +248,7 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
         }
     }
     
-    @objc
-    private func handleComplete() {
+    @objc private func handleComplete() {
         completeButton.isUserInteractionEnabled = false
         guard let isCompleted = self.task?.completed else { return print("Failed to find task.") }
         self.changeCheckButtonImage(isCompleted) {
@@ -220,8 +257,11 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
         }
     }
     
-    @objc
-    private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
+    @objc private func handleTapGesture(_ gesture: UITapGestureRecognizer) {
+        self.delegate?.didEditTask(self)
+    }
+    
+    @objc private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
         switch gesture.state {
         case .began:
             ()
@@ -259,15 +299,28 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
         cellContents.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
         cellContents.alpha = 1.0
         archiveImageView.alpha = 1.0
+        
+        titleLabel.text = ""
     }
     
     // MARK: - UIGestureRecognizerDelegate
     
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if touch.view!.isDescendant(of: completeButton) {
+            return false
+        }
+        return true
+    }
+    
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return false
+        return true
     }
     
     override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        if gestureRecognizer is UITapGestureRecognizer {
+            return true
+        }
+        // UIPanGesture
         return abs((panGesture.velocity(in: panGesture.view)).x) > abs((panGesture.velocity(in: panGesture.view)).y)
     }
 }

@@ -9,13 +9,6 @@ import Firebase
 import FirebaseFirestore
 import GoogleSignIn
 
-struct User {
-    let uid: String
-    let profileImageURL: String
-    let username: String
-    let email: String
-}
-
 class FirebaseHelper: NSObject {
     
     // MARK: - Authentication
@@ -26,25 +19,13 @@ class FirebaseHelper: NSObject {
     
     override init() {
         super.init()
-        GIDSignIn.sharedInstance()?.clientID = FirebaseApp.app()?.options.clientID
-        GIDSignIn.sharedInstance()?.delegate = self
-        
+
         db = Firestore.firestore()
         storage = Storage.storage()
     }
     
     func didCheckLogin() -> Bool {
         return Auth.auth().currentUser != nil
-    }
-    
-    func addStateDidChangeListener() {
-        self.handle = Auth.auth().addStateDidChangeListener({ (auth, user) in
-            //
-        })
-    }
-    
-    func removeStateDidChangeListener() {
-        Auth.auth().removeStateDidChangeListener(handle!)
     }
     
     func signOut() {
@@ -59,34 +40,58 @@ class FirebaseHelper: NSObject {
     
     // MARK: - Cloud FireStore
     
-    func addUser() {
-//        var ref: DocumentReference? = nil
-//        ref = db.collection("users").addDocument(data: <#T##[String : Any]#>, completion: { (err) in
-//            if let err = err {
-//                print("Error adding document: \(err)")
-//            } else {
-//                print("Document added with ID: \(ref!.documentID)")
-//            }
-//        })
-    }
-    
-    func getCollection() {
-        db.collection("users").getDocuments { (querySnapshot, err) in
-            if let err = err {
-                print("Error getting documents: \(err)")
-            } else {
-                for document in querySnapshot!.documents {
-                    print("\(document.documentID) => \(document.data())")
+    func fetchUser(_ completion: @escaping (User) -> Void) {
+        if let user = Auth.auth().currentUser {
+            let uid = user.uid
+            let usersRef = db.collection("users").document(uid)
+            usersRef.getDocument { (document, error) in
+                if let document = document, document.exists {
+                    guard let data = document.data() else { return }
+                    let user = User(uid: document.documentID, dictionary: data)
+                    completion(user)
+                } else {
+                    print("Document does not exists")
                 }
             }
         }
     }
     
-    // MARK: - Storage
-    
-    func upload() {
+    func saveUser(_ user: User, completion: @escaping(() -> Void)) {
+        let data = ["profileImageURL": user.photoURL, "username": user.name, "email": user.email]
         
+        db.collection("users").document(user.uid).setData(data, merge: true) { (err) in
+            if let err = err {
+                print("Failed to set data:", err.localizedDescription)
+            } else {
+                print("Successfully to set data:", data)
+                completion()
+            }
+        }
     }
+    
+//    func fetchTaskLists() -> [TaskList] {
+//        let taskListsRef = db.collection("taskLists")
+//        taskListsRef.getDocuments { (snapshot, error) in
+//            if let error = error {
+//                print("Failed to get data:", error.localizedDescription)
+//            }
+//
+//            guard let data = snapshot?.documents else { return }
+//
+//        }
+//    }
+    
+    func saveTask(_ task: Task) {
+        guard let user = Auth.auth().currentUser else { return }
+        let uid = user.uid
+        
+        let data = ["title": task.title, "duedate": task.duedate!, "completed": task.completed, "repeat": task.repeat, "timestamp": task.timestamp] as [String : Any]
+        
+        let taskListsRef = db.collection("task_lists").document(uid)
+        //taskListsRef.setData(<#T##documentData: [String : Any]##[String : Any]#>, merge: <#T##Bool#>, completion: <#T##((Error?) -> Void)?##((Error?) -> Void)?##(Error?) -> Void#>)
+    }
+    
+    // MARK: - Storage
 }
 
 extension FirebaseHelper: GIDSignInDelegate {

@@ -11,6 +11,8 @@ import GoogleSignIn
 
 class SignInController: UIViewController {
     
+    private let authenticationService = AuthenticationService()
+    
     private let imageView: UIImageView = {
         let iv = UIImageView()
         iv.image = UIImage(named: "startup")?.withRenderingMode(.alwaysOriginal)
@@ -53,10 +55,7 @@ class SignInController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        GIDSignIn.sharedInstance()?.presentingViewController = self
-        GIDSignIn.sharedInstance()?.delegate = self
-        
+                
         view.backgroundColor = UIColor.scheme.secondaryBackground
         
         view.addSubview(imageView)
@@ -80,40 +79,6 @@ class SignInController: UIViewController {
     }
     
     @objc private func handleGetStarted() {
-        GIDSignIn.sharedInstance()?.signIn()
-    }
-}
-
-extension SignInController: GIDSignInDelegate {
-    
-    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
-        // Failed to signin
-        if let error = error {
-            print(error.localizedDescription)
-            return
-        }
-        
-        guard let authentication = user.authentication else { return }
-        let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken, accessToken: authentication.accessToken)
-        
-        Auth.auth().signIn(with: credential) { (authResult, err) in
-            if let err = err {
-                print(err.localizedDescription)
-                return
-            }
-            
-            guard let firUser = authResult?.user else { return }
-            let uid = firUser.uid
-            let profileImageURL = firUser.photoURL!.absoluteString
-            let username = firUser.displayName!
-            let email = firUser.email!
-            
-            guard let taskListController = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first?.rootViewController as? TaskListController else { return }
-            
-            let user = User(uid: uid, profileImageURL: profileImageURL, username: username, email: email)
-            taskListController.user = user
-            
-            self.dismiss(animated: true, completion: nil)
-        }
+        authenticationService.googleSignIn(self)
     }
 }

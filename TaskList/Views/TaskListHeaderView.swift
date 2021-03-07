@@ -41,6 +41,7 @@ class TaskListHeaderView: UICollectionReusableView {
         didSet {
             guard let profileImageURL = self.profileImageURL else { return }
             profileImageView.cacheImage(profileImageURL)
+            profileImageView.contentMode = .scaleAspectFit
         }
     }
     
