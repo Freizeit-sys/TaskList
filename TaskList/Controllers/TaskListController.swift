@@ -10,12 +10,12 @@ import GoogleSignIn
 
 class TaskListController: UIViewController {
     
-    var user: User? {
-        didSet {
-            v.collectionView.reloadData()
-        }
-    }
+    var user: User?
     
+    var tasklists: [TaskList] = []
+    var currentTaskList: TaskList = TaskList(name: "My Tasks")
+    
+    private let config = FirestoreConfigRepository()
     private let authenticationService = AuthenticationService()
     private let firestoreTaskRepository = FirestoreTaskRepository()
     private let datasource = TaskListsDataSource()
@@ -24,7 +24,7 @@ class TaskListController: UIViewController {
     private let headerId = "headerId"
     private var headerView: TaskListHeaderView!
     
-    private let v = TaskListView()
+    let v = TaskListView()
     
     override func loadView() {
         self.view = v
@@ -47,22 +47,54 @@ class TaskListController: UIViewController {
             authenticationService.googleRestorePreviousSignIn()
         }
         
-        firestoreTaskRepository.fetchTaskLists()
-        
         self.setupViews()
         self.setupNavigationBar()
     }
     
-    private func showSignInController() {
-        let signInController = SignInController()
-        signInController.isModalInPresentation = true
-        present(signInController, animated: true, completion: nil)
+    func loadData() {
+        let isLoggedIn: Bool = authenticationService.confirmLoggedIn()
+        v.showSpinner(isLoggedIn)
+        
+        firestoreTaskRepository.fetchTaskLists { (tasklists) in
+            self.tasklists = tasklists
+            
+            for (i, tasklist) in zip(self.tasklists.indices, self.tasklists) {
+                guard let tasklistID = tasklist.id else { return }
+                self.firestoreTaskRepository.fetchTasks(tasklistID: tasklistID) { (tasks) in
+                    self.tasklists[i].tasks = tasks
+                    
+                    // All process done!!
+                    if i == self.tasklists.count - 1 {
+                        self.currentTaskList = self.tasklists[0]
+                        
+                        DispatchQueue.main.async {
+                            self.v.hideSpinner(isLoggedIn)
+                            self.v.collectionView.reloadData()
+                        }
+                    }
+                }
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+    
+//    func setCurrentTaskList() {
+//        guard let currentTaskListID = config.currentTaskListID else { return print("AAAAAAAAA") }
+//        let index = tasklists.firstIndex { (tasklist) -> Bool in
+//            return tasklist.id == currentTaskListID
+//        }
+//        currentTaskList = tasklists[index ?? 0]
+//    }
+    
+    private func showSignInController() {
+        let signInController = SignInController()
+        signInController.isModalInPresentation = true
+        present(signInController, animated: true, completion: nil)
     }
     
     private func setupViews() {
@@ -114,7 +146,7 @@ extension TaskListController: TaskListViewDelegate {
     func didShowMenu() {
         let window = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first
         let taskListsView = TaskListsView()
-        taskListsView.tasklists = firestoreTaskRepository.tasklists
+        taskListsView.tasklists = tasklists
         taskListsView.datasource = self.datasource
         taskListsView.frame = self.view.frame
         taskListsView.setupViews()
@@ -128,14 +160,13 @@ extension TaskListController: TaskListViewDelegate {
             window?.addSubview(createTaskListView)
             
             createTaskListView.didSaveNewTaskList = { [weak self] newTaskList in
-                // Add task list.
-                //self?.datasource.appendTaskList(newTaskList)
+                // Add tasklist.
                 self?.firestoreTaskRepository.addTaskList(newTaskList)
                 
                 // Change displayed task list.
                 guard let index = self?.datasource.countTaskList() else { return }
                 self?.datasource.changeTaskList(at: index - 1)
-                self?.headerView.title = newTaskList.title
+                self?.headerView.title = newTaskList.name
                 
                 // Reload data.
                 self?.reloadData()
@@ -144,8 +175,11 @@ extension TaskListController: TaskListViewDelegate {
         
         taskListsView.didChangeTaskList = { [weak self] (title, index) in
             // Change displayed task list.
-            self?.datasource.changeTaskList(at: index)
-            self?.headerView.title = title
+            guard let tasklists = self?.tasklists else { return }
+            self?.currentTaskList = tasklists[index]
+            
+            //self?.datasource.changeTaskList(at: index)
+            self?.headerView.title = self?.currentTaskList.name//title
             
             // Reload data
             self?.reloadData()
@@ -160,8 +194,7 @@ extension TaskListController: TaskListViewDelegate {
         createTaskVC.modalPresentationStyle = .overCurrentContext
         
         createTaskVC.didSaveTask = { [weak self] newTask in
-            self?.datasource.appendTask(newTask)
-            self?.reloadData()
+            self?.firestoreTaskRepository.addTask(newTask)
         }
         
         present(createTaskVC, animated: true, completion: nil)
@@ -175,12 +208,16 @@ extension TaskListController: TaskListViewDelegate {
         menuView.frame = self.view.frame
         menuView.setupViews()
         
-        menuView.didSortList = { [weak self] soryType in
+        menuView.didSortList = { [weak self] sortType in
             // Sort task list.
-            self?.datasource.sortTaskList(soryType)
-    
+            //self?.datasource.sortTaskList(sortType)
+            guard let currentTaskList = self?.currentTaskList else { return }
+            self?.firestoreTaskRepository.sortTaskList(currentTaskList, sortType: sortType, completion: { (sortedTasks) in
+                self?.currentTaskList.tasks = sortedTasks
+            })
+            
             // Reload data.
-            self?.reloadData()
+            //self?.reloadData()
         }
         
         menuView.didRenameList = { [weak self] taskList in
@@ -192,11 +229,12 @@ extension TaskListController: TaskListViewDelegate {
             
             createTaskListView.didSaveRenameTaskList = { [weak self] (taskList) in
                 // Rename task list.
-                self?.datasource.renameTaskList(taskList.title)
-                self?.headerView.title = taskList.title
+                //self?.datasource.renameTaskList(taskList.name)
+                self?.firestoreTaskRepository.renameTaskList(taskList)
+                self?.headerView.title = taskList.name
                 
                 // Reload data.
-                self?.reloadData()
+                //self?.reloadData()
             }
         }
         
@@ -207,7 +245,7 @@ extension TaskListController: TaskListViewDelegate {
             // Show initial task list.
             let initialTaskList = self?.datasource.taskList(at: 0)
             self?.datasource.changeTaskList(at: 0)
-            self?.headerView.title = initialTaskList?.title
+            self?.headerView.title = initialTaskList?.name
             
             // Reload data.
             self?.reloadData()
@@ -244,46 +282,47 @@ extension TaskListController: UICollectionViewDelegateFlowLayout, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if self.datasource.countTask() > 0 {
-            return self.datasource.countTask()
+//        if self.datasource.countTask() > 0 {
+//            return self.datasource.countTask()
+//        }
+//        return 1
+        if currentTaskList.tasks.count > 0 {
+            return currentTaskList.tasks.count
         }
         return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        if datasource.countTask() > 0 {
-            
+        //if datasource.countTask() > 0 {
+        if currentTaskList.tasks.count > 0 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! TaskCell
             cell.delegate = self
             
-            let task = self.datasource.task(at: indexPath.item)
+            let task = currentTaskList.tasks[indexPath.item] //self.datasource.task(at: indexPath.item)
             cell.task = task
             
             return cell
-            
         } else {
-            
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: emptyCellId, for: indexPath) as! EmptyTaskCell
             return cell
-            
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId, for: indexPath) as? TaskListHeaderView
-        let taskList = self.datasource.selectedTaskList()
-        headerView.title = taskList.title
+        //let taskList = self.datasource.selectedTaskList()
+        headerView.title = currentTaskList.name//taskList.name
         headerView.profileImageURL = user?.photoURL
         headerView.delegate = self
         return headerView
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if datasource.countTask() > 0 {
+        //if datasource.countTask() > 0 {
+        if currentTaskList.tasks.count > 0 {
             let dummyCell = TaskCell(frame: CGRect(x: 0, y: 0, width: view.frame.width - 2 * 32, height: 1000))
             
-            let task = self.datasource.task(at: indexPath.item)
+            let task = currentTaskList.tasks[indexPath.item]//self.datasource.task(at: indexPath.item)
             dummyCell.task = task
             
             dummyCell.layoutIfNeeded()
@@ -356,12 +395,8 @@ extension TaskListController: TaskCellDelegate {
     }
     
     func didDeleteCell(_ cell: TaskCell) {
-        if let indexPath: IndexPath = self.v.collectionView.indexPath(for: cell) {
-            self.v.collectionView.performBatchUpdates({
-                self.datasource.removeTask(at: indexPath.item)
-                self.v.collectionView.deleteItems(at: [indexPath])
-            }, completion: nil)
-        }
+        guard let task = cell.task else { return }
+        self.firestoreTaskRepository.deleteTask(task)
     }
 }
 
@@ -374,7 +409,7 @@ extension TaskListController: UndoSnackBarDelegate {
         // Change displayed task list.
         let index = self.datasource.countTaskList() - 1
         self.datasource.changeTaskList(at: index)
-        self.headerView.title = taskList.title
+        self.headerView.title = taskList.name
         
         // Reload data.
         self.reloadData()

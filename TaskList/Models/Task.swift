@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Firebase
 
 enum Repeat: Int, Codable {
     case doseNotRepeat
@@ -18,28 +19,45 @@ enum Repeat: Int, Codable {
 }
 
 struct Task: Codable {
+    var id: String?
+    var uid: String?
+    var tasklistID: String?
     var title: String
     var duedate: Date?
     var completed: Bool
-    var timestamp: Date = Date()
     var `repeat`: Repeat
+    var completedAt: Date?
+    var createdAt: Date?
+    var updatedAt: Date?
     
-    init(title: String, duedate: Date? = nil, completed: Bool = false,`repeat`: Repeat = .doseNotRepeat) {
+    init(title: String, duedate: Date? = nil, completed: Bool = false, repeat: Repeat = .doseNotRepeat) {
         self.title = title
         self.duedate = duedate
         self.completed = completed
         self.repeat = `repeat`
     }
     
-    init(dictionary: [String: Any]) {
+    init(id: String, dictionary: [String: Any]) {
+        self.id = id
+        self.uid = dictionary["uid"] as? String ?? ""
+        self.tasklistID = dictionary["tasklistID"] as? String ?? ""
+        
         self.title = dictionary["title"] as? String ?? ""
         self.completed = dictionary["completed"] as? Bool ?? false
-        self.repeat = Repeat(rawValue: (dictionary["repeat"]) as! Int) ?? .doseNotRepeat
         
-        let secondsFrom1970 = dictionary["duedate"] as? Double ?? 0
-        self.duedate = Date(timeIntervalSince1970: secondsFrom1970)
+        let `repeat` = dictionary["repeat"] as? Int ?? 0
+        self.repeat = Repeat(rawValue: `repeat`)!
         
-        let _secondsFrom1970 = dictionary["timestamp"] as? Double ?? 0
-        self.timestamp = Date(timeIntervalSince1970: _secondsFrom1970)
+        let duedate = dictionary["duedate"] as? Timestamp ?? nil
+        self.duedate = duedate?.dateValue()
+        
+        let completedAt = dictionary["completedAt"] as? Timestamp ?? nil
+        self.completedAt = completedAt?.dateValue()
+        
+        let createdAt = dictionary["createdAt"] as? Timestamp ?? nil
+        self.createdAt = createdAt?.dateValue()
+        
+        let updatedAt = dictionary["updatedAt"] as? Timestamp ?? nil
+        self.updatedAt = updatedAt?.dateValue()
     }
 }

@@ -18,7 +18,7 @@ class UndoSnackBar: UIView {
     var taskList: TaskList? {
         didSet {
             guard let _taskList = self.taskList else { return }
-            textLabel.text = _taskList.title
+            textLabel.text = _taskList.name
         }
     }
     

@@ -34,10 +34,18 @@ class TaskListView: UIView {
         layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 40, right: 16)
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.backgroundColor = .clear
+        cv.alpha = 0.0
         cv.contentOffset.y = 0.0
         cv.alwaysBounceVertical = false
         cv.showsVerticalScrollIndicator = true
         return cv
+    }()
+    
+    private let spinner: UIActivityIndicatorView = {
+        let ai = UIActivityIndicatorView(style: .large)
+        ai.color = UIColor.scheme.primary
+        ai.hidesWhenStopped = true
+        return ai
     }()
     
     override init(frame: CGRect) {
@@ -53,8 +61,11 @@ class TaskListView: UIView {
     private func commonInit() {
         self.backgroundColor = UIColor.scheme.background
         
+        self.addSubview(spinner)
         self.addSubview(collectionView)
         self.addSubview(tabBar)
+        
+        spinner.centerInSuperView()
         
         self.setupTabBar()
         self.setupCollectionView()
@@ -72,6 +83,20 @@ class TaskListView: UIView {
     
     private func setupCollectionView() {
         collectionView.anchor(top: self.topAnchor, left: self.leftAnchor, bottom: self.tabBar.topAnchor, right: self.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+    }
+    
+    func showSpinner(_ animated: Bool = true) {
+        UIView.animate(withDuration: 0.1, delay: 0.0, options: .curveLinear, animations: {
+            self.collectionView.alpha = 0.0
+            if animated { self.spinner.startAnimating() }
+        }, completion: nil)
+    }
+    
+    func hideSpinner(_ animated: Bool = true) {
+        UIView.animate(withDuration: 0.1, delay: 0.0, options: .curveLinear, animations: {
+            self.collectionView.alpha = 1.0
+            if animated { self.spinner.stopAnimating() }
+        }, completion: nil)
     }
     
     @objc private func handleShowMenu() {

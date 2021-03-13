@@ -13,7 +13,7 @@ class CreateTaskListView: UIView {
         didSet {
             if let _taskList = self.taskList {
                 inputFormView.inputFormType = .rename
-                let title = _taskList.title
+                let title = _taskList.name
                 inputFormView.textField.text = title
             } else {
                 inputFormView.inputFormType = .create
@@ -75,12 +75,12 @@ class CreateTaskListView: UIView {
     }
     
     private func saveNewTaskList(_ text: String) {
-        let taskList = TaskList(title: text)
+        let taskList = TaskList(name: text)
         self.didSaveNewTaskList?(taskList)
     }
     
     private func saveRenameTaskList(_ text: String) {
-        let taskList = TaskList(title: text)
+        let taskList = TaskList(name: text)
         self.didSaveRenameTaskList?(taskList)
     }
     

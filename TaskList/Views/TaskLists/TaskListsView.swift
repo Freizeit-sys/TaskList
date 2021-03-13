@@ -199,7 +199,7 @@ extension TaskListsView: UICollectionViewDelegate, UICollectionViewDataSource, U
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedTaskList = self.datasource.selectedTaskList()
-        self.didChangeTaskList?(selectedTaskList.title, indexPath.item)
+        self.didChangeTaskList?(selectedTaskList.name, indexPath.item)
         self.dismiss()
     }
 }

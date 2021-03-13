@@ -11,7 +11,9 @@ import GoogleSignIn
 
 class SignInController: UIViewController {
     
+    private let config = FirestoreConfigRepository()
     private let authenticationService = AuthenticationService()
+    private let firestoreTaskRepository = FirestoreTaskRepository()
     
     private let imageView: UIImageView = {
         let iv = UIImageView()

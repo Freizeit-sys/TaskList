@@ -13,7 +13,7 @@ class TaskListsCell: UICollectionViewCell {
         didSet {
             guard let taskList = self.taskList else { return }
             
-            let title = taskList.title
+            let title = taskList.name
             titleLabel.text = title
             
             let count = taskList.tasks.count

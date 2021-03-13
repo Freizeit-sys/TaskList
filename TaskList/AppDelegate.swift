@@ -13,7 +13,6 @@ import GoogleSignIn
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
-    let authenticationService = AuthenticationService()
     let notificationManager = NotificationManager()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -33,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.notificationManager.requestAuthorization()
         
         // Set time launchScreen
-        Thread.sleep(forTimeInterval: 0.1)
+        Thread.sleep(forTimeInterval: 0.2)
         
         return true
     }
@@ -78,29 +77,25 @@ extension AppDelegate: GIDSignInDelegate {
         
         print("Successfully sign in.")
         
-        // Use the credentials to authenticate with Firebase.
+        //let config = FirestoreConfigRepository()
+        let authenticationService = AuthenticationService()
+        
         guard let authentication = user.authentication else { return }
         let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken, accessToken: authentication.accessToken)
-        authenticationService.authenticationToFirebase(with: credential)
         
-        guard let uid = user.userID,
-        let name = user.profile.name,
-        let email = user.profile.email
-        else { return }
-        
-        var photoURL: String = ""
-        
-        if user.profile.hasImage {
-            let dimension: UInt = UInt(round(24 * UIScreen.main.scale))
-            photoURL = user.profile.imageURL(withDimension: dimension)!.absoluteString
-        }
-        
-        let user = User(uid: uid, name: name, email: email, photoURL: photoURL)
-        
-        // Any processing
         guard let taskListViewController = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first?.rootViewController as? TaskListController else { return }
-        taskListViewController.user = user
         
+        if let user = Auth.auth().currentUser {
+            taskListViewController.user = User(uid: user.uid, name: user.displayName ?? "", email: user.email ?? "", photoURL: user.photoURL?.absoluteString ?? "")
+            taskListViewController.loadData()
+        } else {
+            // Use the credentials to authenticate with Firebase.
+            authenticationService.authenticationToFirebase(with: credential) { (user) in
+                taskListViewController.user = user
+                taskListViewController.loadData()
+            }
+        }
+                
         // Dismiss sign in view controller
         if let presentingViewController = GIDSignIn.sharedInstance()?.presentingViewController, presentingViewController is SignInController {
             presentingViewController.dismiss(animated: true, completion: nil)

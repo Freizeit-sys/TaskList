@@ -145,7 +145,6 @@ extension CreateTaskController: CreateTaskViewDelegate, TaskInputAccessoryViewDe
             self.task?.title = task.title
             self.task?.duedate = task.duedate
             self.task?.completed = task.completed
-            self.task?.timestamp = task.timestamp
             
             guard let _newTask = self.task else { return }
             

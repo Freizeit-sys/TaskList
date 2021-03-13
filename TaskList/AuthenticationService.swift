@@ -5,13 +5,18 @@
 //  Created by Admin on 2021/03/04.
 //
 
-import Foundation
 import Firebase
 import GoogleSignIn
 
 class AuthenticationService {
     
     var user: FirebaseAuth.User?
+
+    private let db = Firestore.firestore()
+    
+    private var usersCollectionRef: CollectionReference {
+        return db.collection("users")
+    }
     
     func confirmLoggedIn() -> Bool {
         if Auth.auth().currentUser != nil {
@@ -40,7 +45,7 @@ class AuthenticationService {
         }
     }
     
-    func authenticationToFirebase(with credential: AuthCredential) {
+    func authenticationToFirebase(with credential: AuthCredential, completion: @escaping(User) -> Void) {
         Auth.auth().signIn(with: credential) { (authResult, error) in
             if let error = error {
                 print(error.localizedDescription)
@@ -55,32 +60,48 @@ class AuthenticationService {
             
             let user = User(uid: uid, name: name, email: email, photoURL: photoURL)
             self.saveUser(user)
+            
+            completion(user)
         }
     }
     
     private func saveUser(_ user: User) {
-        let value: [String: Any] = [
+        let data: [String: Any] = [
             "photoURL": user.photoURL,
             "username": user.name,
             "email": user.email,
-            "createdAt": ServerValue.timestamp(),
-            "updatedAt": ServerValue.timestamp()
+            "createdAt": FieldValue.serverTimestamp(),
+            "updatedAt": FieldValue.serverTimestamp()
         ]
         
-        Database.database().reference().child("users").child(user.uid).setValue(value, withCompletionBlock: { (error, ref) in
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
+        usersCollectionRef.document(uid).setData(data, completion: { (error) in
             if let error = error {
-                print(error.localizedDescription)
+                print("Failed added user info to db.", error.localizedDescription)
             }
-            print("Successfully saved user info to db.")
+            print("Successfully added user info to db.")
         })
+        
+//        Database.database().reference().child("users").child(user.uid).setValue(value, withCompletionBlock: { (error, ref) in
+//            if let error = error {
+//                print(error.localizedDescription)
+//            }
+//            print("Successfully saved user info to db.")
+//        })
     }
     
-    func fetchUser() {
+    func fetchUser(completion: @escaping(User) -> Void) {
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { (snapshot) in
-            //guard let dictionary = snapshot.value as? [String: Any] else { return }
-            //print(dictionary)
-            print(snapshot)
+        Firestore.firestore().collection("users").document(uid).addSnapshotListener { (documentSnapshot, error) in
+            if let error = error {
+                print("Failed fetched user info:", error.localizedDescription)
+            }
+            print("Successfully fetched user info to db.")
+            
+            guard let data = documentSnapshot?.data() else { return }
+            let user = User(uid: uid, dictionary: data)
+            completion(user)
         }
     }
     
@@ -97,75 +118,3 @@ class AuthenticationService {
         GIDSignIn.sharedInstance()?.restorePreviousSignIn()
     }
 }
-
-class FirestoreTaskRepository: NSObject {
-    
-    var tasklists: [TaskList] = []
-    
-    func fetchTaskLists() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        let ref = Database.database().reference().child("tasklists").child(uid)
-        ref.observeSingleEvent(of: .value) { (snapshot) in
-            if let dictionaries = snapshot.value as? [String: Any] {
-                // Set tasklists
-                dictionaries.forEach { (key, value) in
-                    guard let dictionary = value as? [String: Any] else { return }
-                    let tasklist = TaskList(id: key, dictionary: dictionary)
-                    self.tasklists.append(tasklist)
-                }
-            } else {
-                // Set initial tasklist
-                self.createInitialTaskList(ref)
-            }
-        }
-    }
-    
-    private func createInitialTaskList(_ ref: DatabaseReference) {
-        let tasklist = TaskList(title: "My Tasks")
-        self.tasklists.append(tasklist)
-        
-        let value = ["title": tasklist.title]
-        ref.childByAutoId().setValue(value, withCompletionBlock: { (error, ref) in
-            if let error = error {
-                print(error.localizedDescription)
-            }
-            print("Successfully saved initial tasklist to db.")
-        })
-    }
-    
-    func addTaskList(_ taskList: TaskList) {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        let values: [String: Any] = ["title": taskList.title, "tasks": taskList.tasks]
-        Database.database().reference().child("tasklists").child(uid).childByAutoId().updateChildValues(values) { (error, ref) in
-            if let error = error {
-                print(error.localizedDescription)
-            }
-            print("Successfully added task list to db.")
-        }
-    }
-    
-    func deleteTaskList(at index: Int) {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        Database.database().reference().child("tasklists").child(uid).child(String(index))
-    }
-}
-
-//            guard let dictionaries = snapshot.value as? [String: Any] else { return }
-//            if dictionaries.isEmpty {
-//                print("1")
-//                // Set initial tasklist
-//                self.createInitialTaskList(ref)
-//            } else {
-//                print("2")
-//                // Set tasklists
-//                dictionaries.forEach { (key, value) in
-//                    guard let dictionary = value as? [String: Any] else { return }
-//                    let tasklist = TaskList(id: key, dictionary: dictionary)
-//                    self.tasklists.append(tasklist)
-//                }
-//                // key = 0, 1, 2
-////                for (key, value) in zip(dictionaries.indices, dictionaries) {
-////                    let tasklist = TaskList(id: "", dictionary: value)
-////                    self.tasklists.append(tasklist)
-////                }
-//            }

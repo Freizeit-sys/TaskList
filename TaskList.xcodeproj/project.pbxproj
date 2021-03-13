@@ -33,6 +33,8 @@
 		843407C625F393CB0043B7CE /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843407C525F393CB0043B7CE /* User.swift */; };
 		843407E825F3FBCD0043B7CE /* AuthenticationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843407B625F1033D0043B7CE /* AuthenticationService.swift */; };
 		8434080825F4373D0043B7CE /* EmptyTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8434080725F4373D0043B7CE /* EmptyTaskCell.swift */; };
+		8434080D25F5ADF00043B7CE /* FirebaseTaskRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8434080C25F5ADF00043B7CE /* FirebaseTaskRepository.swift */; };
+		8434083325F6337C0043B7CE /* FirestoreTaskRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8434083225F6337C0043B7CE /* FirestoreTaskRepository.swift */; };
 		844DCB0E25CE990B00666392 /* CALayer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844DCB0D25CE990B00666392 /* CALayer+Extensions.swift */; };
 		846D2F3325CEF7C800D9C63D /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846D2F3225CEF7C800D9C63D /* CustomTabBar.swift */; };
 		846D2F5725D032FF00D9C63D /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846D2F5625D032FF00D9C63D /* SettingsController.swift */; };
@@ -132,6 +134,8 @@
 		843407B625F1033D0043B7CE /* AuthenticationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationService.swift; sourceTree = "<group>"; };
 		843407C525F393CB0043B7CE /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		8434080725F4373D0043B7CE /* EmptyTaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyTaskCell.swift; sourceTree = "<group>"; };
+		8434080C25F5ADF00043B7CE /* FirebaseTaskRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseTaskRepository.swift; sourceTree = "<group>"; };
+		8434083225F6337C0043B7CE /* FirestoreTaskRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreTaskRepository.swift; sourceTree = "<group>"; };
 		844DCB0D25CE990B00666392 /* CALayer+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer+Extensions.swift"; sourceTree = "<group>"; };
 		846D2F3225CEF7C800D9C63D /* CustomTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
 		846D2F5625D032FF00D9C63D /* SettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
@@ -258,6 +262,8 @@
 				8415415D2564639900C9D6F3 /* Views */,
 				8415415C2564639300C9D6F3 /* Controllers */,
 				843407B625F1033D0043B7CE /* AuthenticationService.swift */,
+				8434080C25F5ADF00043B7CE /* FirebaseTaskRepository.swift */,
+				8434083225F6337C0043B7CE /* FirestoreTaskRepository.swift */,
 				841541292564638900C9D6F3 /* AppDelegate.swift */,
 				8415412B2564638900C9D6F3 /* SceneDelegate.swift */,
 				8415412F2564638900C9D6F3 /* Main.storyboard */,
@@ -725,6 +731,8 @@
 				8492CE5225E0D35F00115EB6 /* TaskListsCell.swift in Sources */,
 				8476211525D13B430060EF36 /* ProfileCell.swift in Sources */,
 				8492CE7D25E1476C00115EB6 /* TaskListInputFormView.swift in Sources */,
+				8434083325F6337C0043B7CE /* FirestoreTaskRepository.swift in Sources */,
+				8434080D25F5ADF00043B7CE /* FirebaseTaskRepository.swift in Sources */,
 				8492CD8F25DF79A200115EB6 /* ArchiveImageView.swift in Sources */,
 				8492CD9425DF7E0000115EB6 /* Date+Extensions.swift in Sources */,
 				84F7EBC225EB3D40004FFB48 /* NotificationManager.swift in Sources */,

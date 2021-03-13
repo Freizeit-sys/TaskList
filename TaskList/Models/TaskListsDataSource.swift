@@ -27,7 +27,7 @@ class TaskListsDataSource {
             self.loadSelectedIndex()
         } else {
             // Create task_list.json
-            let taskList = TaskList(title: "My Tasks")
+            let taskList = TaskList(name: "My Tasks")
             self.taskLists.append(taskList)
             self.saveTaskLists()
             
@@ -126,7 +126,7 @@ class TaskListsDataSource {
                 let completedTasks = taskList.tasks.filter { $0.completed == true }
                 
                 let sortedTasks = uncompletedTasks.sorted { (t1, t2) -> Bool in
-                    return t1.timestamp.compare(t2.timestamp) == .orderedDescending
+                    return t1.createdAt!.compare(t2.createdAt!) == .orderedDescending
                 }
                 
                 let tasks = sortedTasks + completedTasks
@@ -149,7 +149,7 @@ class TaskListsDataSource {
     }
     
     func renameTaskList(_ title: String) {
-        self.taskLists[selectedIndex].title = title
+        self.taskLists[selectedIndex].name = title
         self.saveTaskLists()
     }
     

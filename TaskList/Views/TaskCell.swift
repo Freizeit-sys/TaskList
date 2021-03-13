@@ -67,7 +67,10 @@ class TaskCell: UICollectionViewCell, UIGestureRecognizerDelegate {
             ]
             
             let attributedText = NSMutableAttributedString(string: title, attributes: attributed1)
-            attributedText.append(NSAttributedString(string: "\n" + duedateString, attributes: attributed2))
+            
+            if duedateString != nil {
+                attributedText.append(NSAttributedString(string: "\n" + duedateString, attributes: attributed2))
+            }
             
             UIView.transition(with: titleLabel, duration: 0.3, options: .transitionCrossDissolve, animations: {
                 self.titleLabel.attributedText = attributedText
